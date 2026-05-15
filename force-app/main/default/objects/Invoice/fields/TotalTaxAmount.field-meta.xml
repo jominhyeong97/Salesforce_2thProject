@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>TotalTaxAmount</fullName>
+    <inlineHelpText>트랜잭션의 모든 행 항목에 포함된 세금의 롤업입니다.</inlineHelpText>
+    <trackHistory>false</trackHistory>
+</CustomField>

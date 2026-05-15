@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+    <labels>
+        <fullName>Aqua_Quote_Company_Name</fullName>
+        <categories>Aqua Quote</categories>
+        <language>ko</language>
+        <protected>false</protected>
+        <shortDescription>Aqua quote company name</shortDescription>
+        <value>Aqua</value>
+    </labels>
+
+    <labels>
+        <fullName>Aqua_Quote_Document_Title</fullName>
+        <categories>Aqua Quote</categories>
+        <language>ko</language>
+        <protected>false</protected>
+        <shortDescription>Aqua quote document title</shortDescription>
+        <value>견적서</value>
+    </labels>
+
+    <labels>
+        <fullName>Aqua_Quote_Document_Subtitle</fullName>
+        <categories>Aqua Quote</categories>
+        <language>ko</language>
+        <protected>false</protected>
+        <shortDescription>Aqua quote document subtitle</shortDescription>
+        <value>귀사의 요청에 따라 아래와 같이 견적을 제출합니다.</value>
+    </labels>
+
+    <labels>
+        <fullName>Aqua_Quote_Footer_Note</fullName>
+        <categories>Aqua Quote</categories>
+        <language>ko</language>
+        <protected>false</protected>
+        <shortDescription>Aqua quote footer note</shortDescription>
+        <value>본 견적서는 제안 기준으로 작성되었으며, 세부 조건은 계약 협의에 따라 조정될 수 있습니다.</value>
+    </labels>
+
+    <labels>
+        <fullName>Kakao_Map_JavaScript_Key</fullName>
+        <categories>Kakao Map</categories>
+        <language>ko</language>
+        <protected>false</protected>
+        <shortDescription>Kakao Maps JavaScript key</shortDescription>
+        <value>11067e9d672d959baddcc6bc1e7defdf</value>
+    </labels>
+</CustomLabels>

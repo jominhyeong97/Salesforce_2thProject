@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Desired_Product_Type__c</fullName>
+    <label>희망 제품 유형</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>정수전용</fullName>
+                <default>false</default>
+                <label>정수전용</label>
+            </value>
+            <value>
+                <fullName>냉온정</fullName>
+                <default>false</default>
+                <label>냉온정</label>
+            </value>
+            <value>
+                <fullName>얼음정수기</fullName>
+                <default>false</default>
+                <label>얼음정수기</label>
+            </value>
+            <value>
+                <fullName>대용량</fullName>
+                <default>false</default>
+                <label>대용량</label>
+            </value>
+            <value>
+                <fullName>미정</fullName>
+                <default>true</default>
+                <label>미정</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

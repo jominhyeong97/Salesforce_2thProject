@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sales_Routing_Group__c</fullName>
+    <label>영업 라우팅 그룹</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>인바운드</fullName>
+                <default>true</default>
+                <label>인바운드</label>
+            </value>
+            <value>
+                <fullName>인사이드 세일즈</fullName>
+                <default>false</default>
+                <label>인사이드 세일즈</label>
+            </value>
+            <value>
+                <fullName>리텐션</fullName>
+                <default>false</default>
+                <label>리텐션</label>
+            </value>
+            <value>
+                <fullName>전략 영업</fullName>
+                <default>false</default>
+                <label>전략 영업</label>
+            </value>
+            <value>
+                <fullName>엔터프라이즈</fullName>
+                <default>false</default>
+                <label>엔터프라이즈</label>
+            </value>
+            <value>
+                <fullName>파트너</fullName>
+                <default>false</default>
+                <label>파트너</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

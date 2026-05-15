@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Decision_Status__c</fullName>
+    <label>의사결정 상태</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>검토중</fullName>
+                <default>true</default>
+                <label>검토중</label>
+            </value>
+            <value>
+                <fullName>견적중</fullName>
+                <default>false</default>
+                <label>견적중</label>
+            </value>
+            <value>
+                <fullName>내부결재중</fullName>
+                <default>false</default>
+                <label>내부결재중</label>
+            </value>
+            <value>
+                <fullName>구매확정</fullName>
+                <default>false</default>
+                <label>구매확정</label>
+            </value>
+            <value>
+                <fullName>보류</fullName>
+                <default>false</default>
+                <label>보류</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

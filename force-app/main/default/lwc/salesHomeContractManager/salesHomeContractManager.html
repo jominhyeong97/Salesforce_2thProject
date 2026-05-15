@@ -1,0 +1,71 @@
+<template>
+    <lightning-card title="계약 관리" icon-name="standard:contract">
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="계약 관리 데이터를 불러오는 중입니다."></lightning-spinner>
+        </template>
+
+        <template if:true={errorMessage}>
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium slds-text-color_error">
+                {errorMessage}
+            </div>
+        </template>
+
+        <template if:true={data}>
+            <div class="slds-p-horizontal_medium slds-p-top_small">
+                <div class="slds-grid slds-wrap slds-gutters_small">
+                    <template for:each={metrics} for:item="metric">
+                        <div key={metric.label} class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                            <div class="slds-box slds-theme_default">
+                                <p class="slds-text-title_caps">{metric.label}</p>
+                                <p class="slds-text-heading_medium slds-m-top_x-small">{metric.value}</p>
+                                <p class="slds-text-body_small slds-text-color_weak slds-m-top_x-small">
+                                    {metric.helperText}
+                                </p>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <div class="slds-p-around_medium">
+                <lightning-tabset>
+                    <lightning-tab label="계약 종료 60일">
+                        <template if:true={hasExpiringContracts}>
+                            <lightning-datatable
+                                key-field="id"
+                                data={expiringContracts}
+                                columns={contractColumns}
+                                hide-checkbox-column
+                            ></lightning-datatable>
+                        </template>
+                        <template if:false={hasExpiringContracts}>
+                            <div class="slds-p-vertical_medium slds-text-color_weak">
+                                60일 이내 종료되는 계약이 없습니다.
+                            </div>
+                        </template>
+                    </lightning-tab>
+
+                    <lightning-tab label="견적 승인 대기">
+                        <template if:true={hasPendingApprovals}>
+                            <lightning-datatable
+                                key-field="id"
+                                data={pendingApprovals}
+                                columns={approvalColumns}
+                                hide-checkbox-column
+                            ></lightning-datatable>
+                        </template>
+                        <template if:false={hasPendingApprovals}>
+                            <div class="slds-p-vertical_medium slds-text-color_weak">
+                                승인 대기 중인 견적 요청이 없습니다.
+                            </div>
+                        </template>
+                    </lightning-tab>
+                </lightning-tabset>
+            </div>
+
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium slds-text-body_small slds-text-color_weak">
+                계약관리 롤링 필터 리스트뷰: {renewalListViewLabel}
+            </div>
+        </template>
+    </lightning-card>
+</template>

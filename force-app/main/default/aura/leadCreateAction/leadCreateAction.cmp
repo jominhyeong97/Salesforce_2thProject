@@ -1,0 +1,177 @@
+<aura:component
+    implements="force:lightningQuickActionWithoutHeader,lightning:actionOverride,lightning:isUrlAddressable"
+    access="global"
+>
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    <aura:attribute name="pageReference" type="Object" />
+    <aura:attribute name="fullName" type="String" />
+    <aura:attribute name="leadKind" type="String" default="corporate" />
+    <aura:attribute name="companyName" type="String" />
+    <aura:attribute name="isSaving" type="Boolean" default="false" />
+    <aura:attribute name="postalCode" type="String" />
+    <aura:attribute name="baseAddress" type="String" />
+    <aura:attribute name="detailAddress" type="String" />
+    <aura:attribute name="extraAddress" type="String" />
+    <aura:attribute name="addressRegion" type="String" />
+    <aura:attribute name="addressCity" type="String" />
+    <aura:attribute name="addressCountry" type="String" default="대한민국" />
+
+    <lightning:recordEditForm
+        aura:id="leadForm"
+        objectApiName="Lead"
+        onsubmit="{!c.handleSubmit}"
+        onsuccess="{!c.handleSuccess}"
+        onerror="{!c.handleError}"
+    >
+        <lightning:messages />
+
+        <div style="display:none">
+            <lightning:inputField aura:id="lastNameField"    fieldName="LastName" />
+            <lightning:inputField aura:id="firstNameField"   fieldName="FirstName" />
+            <lightning:inputField aura:id="companyField"     fieldName="Company" />
+            <lightning:inputField aura:id="statusField"      fieldName="Status" />
+            <lightning:inputField aura:id="leadSourceField"  fieldName="LeadSource" />
+            <lightning:inputField aura:id="streetField"      fieldName="Street" />
+            <lightning:inputField aura:id="postalCodeField"  fieldName="PostalCode" />
+            <lightning:inputField aura:id="stateField"       fieldName="State" />
+            <lightning:inputField aura:id="cityField"        fieldName="City" />
+            <lightning:inputField aura:id="countryField"     fieldName="Country" />
+        </div>
+
+        <div class="shell slds-p-around_medium">
+           
+
+            <div class="section">
+                <h3 class="section-title">기본 정보</h3>
+                <div class="field-grid">
+                    <lightning:select
+                        name="leadKind"
+                        label="고객 구분"
+                        value="{!v.leadKind}"
+                    >
+                        <option value="corporate">법인</option>
+                        <option value="personal">개인</option>
+                    </lightning:select>
+                    <lightning:input
+                        aura:id="fullNameInput"
+                        name="fullName"
+                        label="이름"
+                        value="{!v.fullName}"
+                        maxlength="80"
+                        required="true"
+                    />
+                    <aura:if isTrue="{!v.leadKind == 'corporate'}">
+                        <lightning:input
+                            aura:id="companyInput"
+                            name="companyName"
+                            label="회사명"
+                            value="{!v.companyName}"
+                            maxlength="255"
+                            required="true"
+                        />
+                        <aura:set attribute="else">
+                            <div class="field-span">
+                        
+                            </div>
+                        </aura:set>
+                    </aura:if>
+                    <lightning:inputField fieldName="Email" />
+                    <lightning:inputField fieldName="MobilePhone" />
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title-row">
+                    <h3 class="section-title">주소 정보</h3>
+                    <lightning:button
+                        label="주소 찾기"
+                        variant="neutral"
+                        onclick="{!c.handleAddressSearch}"
+                        disabled="{!v.isSaving}"
+                    />
+                </div>
+                <div class="field-grid">
+                    <lightning:input
+                        name="postalCode"
+                        label="우편번호"
+                        value="{!v.postalCode}"
+                        maxlength="10"
+                    />
+                    <lightning:input
+                        name="addressRegion"
+                        label="시/도"
+                        value="{!v.addressRegion}"
+                        maxlength="80"
+                    />
+                    <lightning:input
+                        class="field-span"
+                        name="baseAddress"
+                        label="주소"
+                        value="{!v.baseAddress}"
+                        maxlength="255"
+                    />
+                    <lightning:input
+                        name="addressCity"
+                        label="시/군/구"
+                        value="{!v.addressCity}"
+                        maxlength="80"
+                    />
+                    <lightning:input
+                        name="extraAddress"
+                        label="참고 항목"
+                        value="{!v.extraAddress}"
+                        maxlength="255"
+                    />
+                    <lightning:input
+                        aura:id="detailAddressInput"
+                        class="field-span"
+                        name="detailAddress"
+                        label="상세 주소"
+                        value="{!v.detailAddress}"
+                        maxlength="255"
+                    />
+                </div>
+
+            </div>
+
+            <div class="section">
+                <h3 class="section-title">상담 기본 정보</h3>
+                <div class="field-grid">
+                    <lightning:inputField fieldName="Sales_Model__c" />
+                    <lightning:inputField fieldName="Customer_Scenario__c" />
+                    <lightning:inputField fieldName="Inquiry_Intent__c" />
+                    <lightning:inputField fieldName="Desired_Product_Type__c" />
+                    <lightning:inputField fieldName="Purchase_Timeline__c" />
+                    <lightning:inputField fieldName="Estimated_Unit_Count__c" />
+                    <lightning:inputField fieldName="Service_Preference__c" />
+                    <lightning:inputField fieldName="Desired_Rental_Budget__c" />
+                    <lightning:inputField fieldName="Desired_Purchase_Budget__c" />
+                    <lightning:inputField fieldName="Current_Monthly_Rental_Fee__c" />
+                    <lightning:inputField fieldName="Current_Contract_End_Date__c" />
+                    <lightning:inputField fieldName="Competitor_In_Use__c" />
+                    <div class="field-span">
+                        <lightning:inputField fieldName="Pain_Points__c" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-actions">
+                <lightning:button
+                    label="취소"
+                    onclick="{!c.handleCancel}"
+                    disabled="{!v.isSaving}"
+                />
+                <lightning:button
+                    label="리드 생성"
+                    variant="brand"
+                    onclick="{!c.handleSave}"
+                    disabled="{!v.isSaving}"
+                />
+            </div>
+        </div>
+
+        <aura:if isTrue="{!v.isSaving}">
+            <lightning:spinner alternativeText="리드를 생성하는 중입니다." size="medium" />
+        </aura:if>
+    </lightning:recordEditForm>
+</aura:component>

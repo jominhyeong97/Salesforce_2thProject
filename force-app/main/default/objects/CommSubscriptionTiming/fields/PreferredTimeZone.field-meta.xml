@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>PreferredTimeZone</fullName>
+    <inlineHelpText>선호하는 시간 범위의 시간대입니다.</inlineHelpText>
+    <trackHistory>false</trackHistory>
+</CustomField>

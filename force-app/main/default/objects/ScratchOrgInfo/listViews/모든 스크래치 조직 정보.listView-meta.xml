@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ListView xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>모든 스크래치 조직 정보</fullName>
+    <filterScope>Everything</filterScope>
+    <label>모든 스크래치 조직 정보</label>
+</ListView>

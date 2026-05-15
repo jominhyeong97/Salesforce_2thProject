@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Type</fullName>
+    <inlineHelpText>범위: 일정 가격은 사용량에 적용되는 계층만 사용해야 합니다. 슬래브: 주어진 한도 내의 사용은 계층 값과 동등한 가격 정책이 적용됩니다.</inlineHelpText>
+    <trackHistory>false</trackHistory>
+</CustomField>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Unit</fullName>
+    <inlineHelpText>커뮤니케이션 타이밍을 결정하기 위해 오프셋에 작동하는 시간 단위입니다.</inlineHelpText>
+    <trackHistory>false</trackHistory>
+</CustomField>

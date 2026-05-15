@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Consultation_Type__c</fullName>
+    <label>상담 유형</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>초기 상담</fullName>
+                <default>true</default>
+                <label>초기 상담</label>
+            </value>
+            <value>
+                <fullName>견적 상담</fullName>
+                <default>false</default>
+                <label>견적 상담</label>
+            </value>
+            <value>
+                <fullName>데모 상담</fullName>
+                <default>false</default>
+                <label>데모 상담</label>
+            </value>
+            <value>
+                <fullName>기술 상담</fullName>
+                <default>false</default>
+                <label>기술 상담</label>
+            </value>
+            <value>
+                <fullName>파트너 상담</fullName>
+                <default>false</default>
+                <label>파트너 상담</label>
+            </value>
+            <value>
+                <fullName>경쟁사 교체 상담</fullName>
+                <default>false</default>
+                <label>경쟁사 교체 상담</label>
+            </value>
+            <value>
+                <fullName>렌탈 갱신 상담</fullName>
+                <default>false</default>
+                <label>렌탈 갱신 상담</label>
+            </value>
+            <value>
+                <fullName>구매 전환 상담</fullName>
+                <default>false</default>
+                <label>구매 전환 상담</label>
+            </value>
+            <value>
+                <fullName>대형 설치 상담</fullName>
+                <default>false</default>
+                <label>대형 설치 상담</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

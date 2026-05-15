@@ -1,0 +1,41 @@
+<apex:page showHeader="false" sidebar="false" standardStylesheets="false"></apex:page>
+<html>
+<head>
+    <meta charset="UTF-8" />
+
+    <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+    <script>
+        function openPostcode() {
+            new daum.Postcode({
+                oncomplete: function(data) {
+                    const payload = {
+                        type: "KAKAO_POSTCODE_SELECTED",
+                        zonecode: data.zonecode,
+                        address: data.address,
+                        roadAddress: data.roadAddress,
+                        jibunAddress: data.jibunAddress,
+                        extraAddress: data.buildingName || "",
+                        region: data.sido,
+                        city: data.sigungu,
+                        country: "대한민국"
+                    };
+
+                    if (window.opener) {
+                        window.opener.postMessage(payload, "*");
+                    }
+
+                    window.close();
+                }
+            }).open();
+        }
+
+        window.onload = function() {
+            openPostcode();
+        };
+    </script>
+</head>
+<body>
+</body>
+</html>
+</apex:page>

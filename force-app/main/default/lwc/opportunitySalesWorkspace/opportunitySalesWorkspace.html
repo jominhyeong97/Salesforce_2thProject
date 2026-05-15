@@ -1,0 +1,153 @@
+<template>
+    <lightning-card title="기회 영업 요약" icon-name="standard:opportunity">
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="기회 영업 요약을 불러오는 중입니다."></lightning-spinner>
+        </template>
+
+        <template if:true={errorMessage}>
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium slds-text-color_error">
+                {errorMessage}
+            </div>
+        </template>
+
+        <template if:true={hasRecord}>
+            <!-- Hero: 상담방식 badge + 계산 총 금액 -->
+            <div class="slds-p-horizontal_medium slds-p-top_small">
+                <div class="slds-grid slds-wrap slds-gutters_small">
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_3-of-12">
+                        <div class="slds-box slds-theme_default slds-text-align_center summary-box">
+                            <p class="slds-text-title_caps">상담 방식</p>
+                            <p class={salesModelBadgeClass}>{salesModel}</p>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_9-of-12">
+                        <div class="slds-box slds-theme_default slds-text-align_center summary-box">
+                            <p class="slds-text-title_caps">계산 총 금액</p>
+                            <p class="amount-total slds-m-top_x-small">{totalAmount}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="slds-p-around_medium">
+
+                <!-- 가격 구성 -->
+                <section class="section-block">
+                    <div class="slds-text-title_bold slds-m-bottom_x-small">가격 구성</div>
+
+                    <template if:true={hasPricingData}>
+                        <template if:true={showRentalFormula}>
+                            <template if:true={isCompare}>
+                                <div class="formula-sub-label">렌탈 기준</div>
+                            </template>
+                            <div class="formula-row">
+                                <template if:true={hasMonthlyFee}>
+                                    <div class="formula-item">
+                                        <p class="formula-caption">월 렌탈료</p>
+                                        <p class="formula-value">{monthlyRentalFee}</p>
+                                    </div>
+                                    <template if:true={hasRentalTerm}>
+                                        <div class="formula-op">×</div>
+                                    </template>
+                                </template>
+                                <template if:true={hasRentalTerm}>
+                                    <div class="formula-item">
+                                        <p class="formula-caption">계약기간</p>
+                                        <p class="formula-value">{rentalTermLabel}</p>
+                                    </div>
+                                </template>
+                                <template if:true={hasInstallationFee}>
+                                    <div class="formula-op">+</div>
+                                    <div class="formula-item">
+                                        <p class="formula-caption">설치비</p>
+                                        <p class="formula-value">{installationFee}</p>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+
+                        <template if:true={showPurchaseFormula}>
+                            <template if:true={isCompare}>
+                                <div class="formula-sub-label slds-m-top_small">구매 기준</div>
+                            </template>
+                            <div class="formula-row">
+                                <template if:true={hasPurchaseAmount}>
+                                    <div class="formula-item">
+                                        <p class="formula-caption">구매 금액</p>
+                                        <p class="formula-value">{purchaseTotalAmount}</p>
+                                    </div>
+                                </template>
+                                <template if:true={hasInstallationFee}>
+                                    <div class="formula-op">+</div>
+                                    <div class="formula-item">
+                                        <p class="formula-caption">설치비</p>
+                                        <p class="formula-value">{installationFee}</p>
+                                    </div>
+                                </template>
+                            </div>
+                        </template>
+                    </template>
+
+                    <template if:false={hasPricingData}>
+                        <div class="no-pricing-note">
+                            제품 라인 아이템을 추가하면 가격이 자동 계산됩니다.
+                        </div>
+                    </template>
+                </section>
+
+                <!-- 진행 상태 -->
+                <section class="section-block">
+                    <div class="slds-text-title_bold slds-m-bottom_x-small">진행 상태</div>
+                    <div class="slds-grid slds-wrap slds-gutters_small">
+                        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                            <div class="field-block">
+                                <p class="slds-text-title_caps">사업자번호 검증</p>
+                                <p class={businessVerifiedClass}>{businessVerifiedLabel}</p>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                            <div class="field-block">
+                                <p class="slds-text-title_caps">견적 결재 상태</p>
+                                <p class={approvalStatusClass}>{approvalStatus}</p>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                            <div class="field-block">
+                                <p class="slds-text-title_caps">의사결정 상태</p>
+                                <p class="field-value slds-m-top_x-small">{decisionStatus}</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 고객 상황 -->
+                <section class="section-block">
+                    <div class="slds-text-title_bold slds-m-bottom_x-small">고객 상황</div>
+                    <div class="slds-grid slds-wrap slds-gutters_small">
+                        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                            <div class="field-block">
+                                <p class="slds-text-title_caps">고객 상황</p>
+                                <p class="field-value slds-m-top_x-small">{customerScenario}</p>
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                            <div class="field-block">
+                                <p class="slds-text-title_caps">희망 설치일</p>
+                                <p class="field-value slds-m-top_x-small">{expectedInstallDate}</p>
+                            </div>
+                        </div>
+                        <template if:true={showReopenPotential}>
+                            <div class="slds-col slds-size_1-of-1 slds-m-top_small">
+                                <div class="field-block">
+                                    <p class="slds-text-title_caps">재오픈 가능성</p>
+                                    <p class={reopenPotentialClass}>{reopenPotential}</p>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </section>
+
+            </div>
+        </template>
+    </lightning-card>
+</template>

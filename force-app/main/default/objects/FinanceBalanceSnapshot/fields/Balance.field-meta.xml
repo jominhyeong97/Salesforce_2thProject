@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Balance</fullName>
+    <inlineHelpText>스냅샷 참조 엔티티의 최종 잔액입니다. 융자의 참조 엔티티가 대변 메모, 차변 메모, 인보이스, 지불 또는 환불일 경우 융자의 결과 잔액에서 상속됩니다.</inlineHelpText>
+</CustomField>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ConsentCapturedSource</fullName>
+    <inlineHelpText>동의를 수집한 소스입니다. 예: user@example.com 또는 www.example.com.</inlineHelpText>
+    <trackHistory>false</trackHistory>
+</CustomField>

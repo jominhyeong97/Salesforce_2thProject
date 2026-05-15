@@ -1,0 +1,41 @@
+<template>
+    <div class="kpi-bar">
+        <template if:true={isLoading}>
+            <lightning-spinner size="small" alternative-text="KPI 데이터를 불러오는 중입니다."></lightning-spinner>
+        </template>
+
+        <template if:true={errorMessage}>
+            <div class="slds-text-color_error slds-p-around_small">{errorMessage}</div>
+        </template>
+
+        <template if:true={hasData}>
+            <!-- 기회 파이프라인 -->
+            <div class="kpi-group">
+                <div class="kpi-group-label">기회 파이프라인</div>
+                <div class="kpi-row">
+                    <template for:each={opportunityMetrics} for:item="card">
+                        <div key={card.label} class={card.cardClass}>
+                            <p class="kpi-value">{card.value}</p>
+                            <p class="kpi-label">{card.label}</p>
+                            <p class="kpi-helper">{card.helperText}</p>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- 계약 현황 -->
+            <div class="kpi-group slds-m-top_small">
+                <div class="kpi-group-label">계약 현황</div>
+                <div class="kpi-row">
+                    <template for:each={contractMetrics} for:item="card">
+                        <div key={card.label} class={card.cardClass}>
+                            <p class="kpi-value">{card.value}</p>
+                            <p class="kpi-label">{card.label}</p>
+                            <p class="kpi-helper">{card.helperText}</p>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </template>
+    </div>
+</template>

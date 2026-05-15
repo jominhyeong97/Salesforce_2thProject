@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ActionDefinition</fullName>
+    <inlineHelpText>연결된 전역 작업, 빠른 작업, 화면 플로 또는 모바일 플로를 찾아서 선택합니다.</inlineHelpText>
+    <trackHistory>false</trackHistory>
+</CustomField>

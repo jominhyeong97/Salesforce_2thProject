@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BaseCurrencyBalance</fullName>
+    <inlineHelpText>결과 잔액에 필요한 통화 변환을 기반으로 값을 정의합니다.</inlineHelpText>
+</CustomField>

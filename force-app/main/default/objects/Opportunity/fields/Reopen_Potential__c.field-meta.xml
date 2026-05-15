@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Reopen_Potential__c</fullName>
+    <label>재오픈 가능성</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>높음</fullName>
+                <default>false</default>
+                <label>높음</label>
+            </value>
+            <value>
+                <fullName>보통</fullName>
+                <default>true</default>
+                <label>보통</label>
+            </value>
+            <value>
+                <fullName>낮음</fullName>
+                <default>false</default>
+                <label>낮음</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

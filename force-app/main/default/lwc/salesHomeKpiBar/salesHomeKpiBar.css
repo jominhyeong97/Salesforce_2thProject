@@ -1,0 +1,77 @@
+:host {
+    display: block;
+}
+
+.kpi-bar {
+    padding: 0.75rem 1rem;
+    background: #f3f2f2;
+    border-bottom: 1px solid #dddbda;
+}
+
+.kpi-group-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #706e6b;
+    margin-bottom: 0.375rem;
+}
+
+.kpi-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.kpi-card {
+    flex: 1 1 0;
+    min-width: 7rem;
+    padding: 0.625rem 0.875rem;
+    border-radius: 0.375rem;
+    border-left: 4px solid transparent;
+    background: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+/* value (large number) */
+.kpi-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: #181818;
+}
+
+/* card label */
+.kpi-label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #3e3e3c;
+    margin-top: 0.25rem;
+}
+
+/* helper text */
+.kpi-helper {
+    font-size: 0.6875rem;
+    color: #706e6b;
+    margin-top: 0.125rem;
+}
+
+/* ── Theme variants ─────────────────────────────── */
+
+.kpi-active  { border-left-color: #0070d2; }
+.kpi-active .kpi-value { color: #0070d2; }
+
+.kpi-success { border-left-color: #2e844a; }
+.kpi-success .kpi-value { color: #2e844a; }
+
+.kpi-fail    { border-left-color: #aeaeae; }
+.kpi-fail .kpi-value { color: #706e6b; }
+
+.kpi-pending { border-left-color: #dd7a01; }
+.kpi-pending .kpi-value { color: #dd7a01; }
+
+.kpi-expiring { border-left-color: #c23934; }
+.kpi-expiring .kpi-value { color: #c23934; }
+
+.kpi-new     { border-left-color: #2e844a; }
+.kpi-new .kpi-value { color: #2e844a; }

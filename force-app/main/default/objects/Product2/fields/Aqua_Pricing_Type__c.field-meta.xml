@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Aqua_Pricing_Type__c</fullName>
+    <label>Aqua 가격 유형</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>렌탈 월과금</fullName>
+                <default>false</default>
+                <label>렌탈 월과금</label>
+            </value>
+            <value>
+                <fullName>서비스 월과금</fullName>
+                <default>false</default>
+                <label>서비스 월과금</label>
+            </value>
+            <value>
+                <fullName>구매 일시금</fullName>
+                <default>false</default>
+                <label>구매 일시금</label>
+            </value>
+            <value>
+                <fullName>설치 일시금</fullName>
+                <default>false</default>
+                <label>설치 일시금</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

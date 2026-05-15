@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Price</fullName>
+    <inlineHelpText>이 소비율의 한도 내에 있는 사용량에 대한 가격.</inlineHelpText>
+    <trackHistory>false</trackHistory>
+</CustomField>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>AquaPricingSupport</members>
+        <members>AquaPricingSupportTest</members>
+        <members>AquaQuotePdfController</members>
+        <members>LeadSalesAutomationHandler</members>
+        <members>OpportunityBusinessVerificationTest</members>
+        <members>QuotePdfGenerationService</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>LeadTrigger</members>
+        <members>OpportunityLineItemTrigger</members>
+        <members>OpportunityTrigger</members>
+        <members>QuoteLineItemTrigger</members>
+        <members>QuoteTrigger</members>
+        <name>ApexTrigger</name>
+    </types>
+    <types>
+        <members>Lead.Expected_Rental_Term_Months__c</members>
+        <members>Lead.Estimated_Monthly_Rental_Fee__c</members>
+        <members>Lead.Estimated_Purchase_Amount__c</members>
+        <members>Lead.Estimated_Total_Amount__c</members>
+        <members>Opportunity.Calculated_Total_Amount__c</members>
+        <members>Opportunity.Installation_Fee__c</members>
+        <members>Opportunity.Monthly_Rental_Fee__c</members>
+        <members>Opportunity.Purchase_Total_Amount__c</members>
+        <members>Opportunity.Rental_Term_Months__c</members>
+        <members>Product2.Aqua_Pricing_Type__c</members>
+        <members>Quote.Total_Quoted_Amount__c</members>
+        <name>CustomField</name>
+    </types>
+    <types>
+        <members>RTF_Create_Contract_for_Completed_Opportunity</members>
+        <members>SCF_Opportunity_Business_Status_Verification</members>
+        <name>Flow</name>
+    </types>
+    <types>
+        <members>Lead-Lead Layout</members>
+        <members>Lead-Lead (Marketing) Layout</members>
+        <members>Lead-Lead (Sales) Layout</members>
+        <members>Lead-Lead (Support) Layout</members>
+        <members>Opportunity-Opportunity Layout</members>
+        <members>Opportunity-Opportunity (Marketing) Layout</members>
+        <members>Opportunity-Opportunity (Sales) Layout</members>
+        <members>Opportunity-Opportunity (Support) Layout</members>
+        <members>Quote-견적 레이아웃</members>
+        <name>Layout</name>
+    </types>
+    <types>
+        <members>leadSalesWorkspace</members>
+        <members>quotePdfGenerator</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>CRM_Analytics_Field_Access</members>
+        <name>PermissionSet</name>
+    </types>
+    <types>
+        <members>AquaQuotePdf</members>
+        <name>ApexPage</name>
+    </types>
+    <version>66.0</version>
+</Package>

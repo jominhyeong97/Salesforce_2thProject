@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Decision_By__c</fullName>
+    <label>처리자</label>
+    <referenceTo>User</referenceTo>
+    <relationshipLabel>Decided Quote Approvals</relationshipLabel>
+    <relationshipName>DecidedQuoteApprovals</relationshipName>
+    <required>false</required>
+    <trackTrending>false</trackTrending>
+    <type>Lookup</type>
+</CustomField>

@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Aqua Premium 상담 신청</title>
+  
+  <script src="https://t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+
+  <style>
+    :root {
+      --sf-blue: #0176d3;
+      --sf-blue-dark: #014486;
+      --sf-bg: #f3f6f9;
+      --sf-card: #ffffff;
+      --sf-border: #dddbda;
+      --sf-text-main: #080707;
+      --sf-text-sub: #444444;
+      --sf-label: #3e3e3c;
+      --sf-shadow: 0 12px 24px rgba(0, 0, 0, 0.05);
+      --sf-radius: 8px;
+    }
+
+    * { box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+
+    body {
+      margin: 0;
+      padding: 60px 20px;
+      background: var(--sf-bg);
+      color: var(--sf-text-main);
+      font-family: 'Salesforce Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.5;
+    }
+
+    .page-container {
+      max-width: 880px;
+      margin: 0 auto;
+    }
+
+    /* 상단 헤더 디자인 - 한 줄로 나오도록 수정 */
+    .page-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .brand-name {
+      color: var(--sf-blue);
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .page-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin: 0 0 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .page-description {
+      font-size: 1.1rem;
+      color: var(--sf-text-sub);
+      width: 100%; /* 너비 제한 해제 */
+      margin: 0 auto;
+      white-space: nowrap; /* 줄바꿈 방지 */
+    }
+
+    /* 카드 컨테이너 */
+    .card {
+      background: var(--sf-card);
+      border-radius: var(--sf-radius);
+      box-shadow: var(--sf-shadow);
+      border: 1px solid var(--sf-border);
+      overflow: hidden;
+    }
+
+    .card-header {
+      padding: 32px 40px;
+      border-bottom: 1px solid var(--sf-border);
+      background: #fafafb;
+    }
+
+    .card-header h2 { margin: 0 0 4px; font-size: 1.3rem; font-weight: 700; }
+    .card-header p { margin: 0; color: var(--sf-text-sub); font-size: 0.9rem; }
+
+    form { padding: 40px; }
+    .section { margin-bottom: 48px; }
+    .section-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin: 0 0 24px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #f3f3f3;
+      color: var(--sf-blue);
+    }
+
+    .field-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field.full { grid-column: span 2; }
+
+    label { font-size: 0.8rem; font-weight: 600; color: var(--sf-label); }
+    .required { color: #ea001e; margin-left: 2px; }
+
+    input, select, textarea {
+      padding: 10px 14px;
+      border: 1px solid var(--sf-border);
+      border-radius: 4px;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+      background-color: #fff;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--sf-blue);
+      box-shadow: 0 0 0 3px rgba(1, 118, 211, 0.1);
+    }
+
+    /* 주소 섹션 상단 버튼 */
+    .section-heading {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .secondary-button {
+      background: #fff;
+      border: 1px solid var(--sf-blue);
+      color: var(--sf-blue);
+      padding: 6px 14px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .primary-button {
+      background: var(--sf-blue);
+      color: #fff;
+      border: none;
+      padding: 16px 0;
+      font-size: 1.1rem;
+      font-weight: 700;
+      border-radius: 4px;
+      cursor: pointer;
+      width: 100%;
+      transition: background 0.2s;
+    }
+
+    .primary-button:hover { background: var(--sf-blue-dark); }
+
+    /* 카카오 레이어 */
+    .postcode-layer {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 20px;
+      align-items: center;
+      justify-content: center;
+    }
+    .postcode-layer.is-open { display: flex; }
+    .postcode-layer-shell {
+      width: 100%; max-width: 500px; background: #fff; border-radius: 8px; overflow: hidden;
+    }
+
+    @media (max-width: 768px) {
+      .field-grid { grid-template-columns: 1fr; }
+      .page-description { white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-container">
+    <header class="page-header">
+      <span class="brand-name">AQUA WATER SOLUTIONS</span>
+      <h1 class="page-title">상담 문의 접수</h1>
+      <p class="page-description">전문 상담사가 귀사의 비즈니스 환경에 최적화된 맞춤형 솔루션을 제안해 드립니다.</p>
+    </header>
+
+    <main class="card">
+      <div class="card-header">
+        <h2>AQUA Lead 생성</h2>
+        <p>상담에 필요한 정보를 입력해 주세요.</p>
+      </div>
+
+      <form id="webToLeadForm" action="https://webto.salesforce.com/servlet/servlet.WebToLead?encoding=UTF-8&orgId=00DdM00000pa0FR" method="POST">
+        <input type="hidden" name="oid" value="00DdM00000pa0FR">
+        <input type="hidden" name="retURL" value="https://www.salesforce.com/kr/">
+        <input type="hidden" name="lead_source" value="Web">
+        <input type="hidden" id="street" name="street">
+        <input type="hidden" id="city" name="city">
+        <input type="hidden" id="state" name="state">
+        <input type="hidden" id="zip" name="zip">
+
+        <section class="section">
+          <h3 class="section-title">기본 정보</h3>
+          <div class="field-grid">
+            <div class="field">
+              <label for="customer_type">고객 구분 <span class="required">*</span></label>
+              <select id="customer_type" required>
+                <option value="corporate" selected>법인</option>
+                <option value="personal">개인</option>
+              </select>
+            </div>
+            <div class="field full">
+              <label for="last_name">이름 <span class="required">*</span></label>
+              <input id="last_name" name="last_name" type="text" required>
+            </div>
+            <div class="field full" id="company_field_wrapper">
+              <label for="company">회사명 <span class="required">*</span></label>
+              <input id="company" name="company" type="text" required>
+            </div>
+            <div
+              class="field full"
+              id="personal_company_help"
+              style="display:none; color: var(--sf-text-sub); font-size: 0.9rem;"
+            >
+        
+            </div>
+            <div class="field">
+              <label for="email">이메일</label>
+              <input id="email" name="email" type="email">
+            </div>
+            <div class="field">
+              <label for="mobile">휴대폰</label>
+              <input id="mobile" name="mobile" type="tel">
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <div class="section-heading">
+            <h3 class="section-title" style="border:none; margin:0; padding:0;">사업장 주소</h3>
+            <button type="button" onclick="openPostcodeSearch()" class="secondary-button">주소 찾기</button>
+          </div>
+          <div class="field-grid">
+            <div class="field">
+              <label>우편번호</label>
+              <input id="postcode_display" type="text" readonly>
+            </div>
+            <div class="field">
+              <label>시/도</label>
+              <input id="state_display" type="text" readonly>
+            </div>
+            <div class="field full">
+              <label>주소</label>
+              <input id="address_display" type="text" readonly>
+            </div>
+            <div class="field">
+              <label>시/군/구</label>
+              <input id="city_display" type="text" readonly>
+            </div>
+            <div class="field">
+              <label>상세 주소</label>
+              <input id="detail_address_display" type="text">
+            </div>
+          </div>
+        </section>
+
+        <section class="section">
+          <h3 class="section-title">상담 상세 정보</h3>
+          <div class="field-grid">
+            <div class="field">
+              <label for="sales_model">상담 방식</label>
+              <select id="sales_model" name="00NdM00002HaFQq">
+                <option value="렌탈">렌탈</option>
+                <option value="구매">구매</option>
+                <option value="비교 후 결정" selected>비교 후 결정</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="customer_scenario">고객 상황</label>
+              <select id="customer_scenario" name="00NdM00002HaFQl">
+                <option value="신규 도입" selected>신규 도입</option>
+                <option value="렌탈 유지 검토">렌탈 유지 검토</option>
+                <option value="렌탈→구매 전환">렌탈→구매 전환</option>
+                <option value="경쟁사 교체">경쟁사 교체</option>
+                <option value="추가 설치">추가 설치</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="inquiry_intent">문의 목적</label>
+              <select id="inquiry_intent" name="00NdM00002HYJFF">
+                <option value="" selected>--없음--</option>
+                <option value="견적 요청">견적 요청</option>
+                <option value="제품 문의">제품 문의</option>
+                <option value="데모 요청">데모 요청</option>
+                <option value="기술 문의">기술 문의</option>
+                <option value="파트너 문의">파트너 문의</option>
+                <option value="기타">기타</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="desired_product_type">희망 제품 유형</label>
+              <select id="desired_product_type" name="00NdM00002HaFQm">
+                <option value="정수전용">정수전용</option>
+                <option value="냉온정">냉온정</option>
+                <option value="얼음정수기">얼음정수기</option>
+                <option value="대용량">대용량</option>
+                <option value="미정" selected>미정</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="purchase_timeline">도입 희망 시점</label>
+              <select id="purchase_timeline" name="00NdM00002HYJFI">
+                <option value="즉시">즉시</option>
+                <option value="1개월 이내">1개월 이내</option>
+                <option value="3개월 이내">3개월 이내</option>
+                <option value="6개월 이내">6개월 이내</option>
+                <option value="6개월 이후">6개월 이후</option>
+                <option value="미정" selected>미정</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="estimated_unit_count">예상 설치 대수</label>
+              <input id="estimated_unit_count" name="00NdM00002HaFQp" type="number" min="0" step="1" placeholder="예: 3">
+            </div>
+            <div class="field">
+                <label for="desired_rental_budget">희망 렌탈 예산</label>
+                <select id="desired_rental_budget" name="00NdM00002HaFQo">
+                  <option value="5만원 미만">5만원 미만</option>
+                  <option value="5만-10만원">5만-10만원</option>
+                  <option value="10만-20만원">10만-20만원</option>
+                  <option value="20만원 이상">20만원 이상</option>
+                  <option value="미정" selected>미정</option>
+                </select>
+            </div>
+            <div class="field">
+                <label for="service_preference">관리 선호 방식</label>
+                <select id="service_preference" name="00NdM00002HaFQs">
+                  <option value="방문 관리">방문 관리</option>
+                  <option value="셀프 관리">셀프 관리</option>
+                  <option value="상관없음">상관없음</option>
+                  <option value="미정" selected>미정</option>
+                </select>
+            </div>
+            <div class="field">
+              <label for="desired_purchase_budget">희망 구매 예산</label>
+              <select id="desired_purchase_budget" name="00NdM00002HaFQn">
+                <option value="50만원 미만">50만원 미만</option>
+                <option value="50만-100만원">50만-100만원</option>
+                <option value="100만-300만원">100만-300만원</option>
+                <option value="300만원 이상">300만원 이상</option>
+                <option value="미정" selected>미정</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="current_monthly_rental_fee">현재 월 렌탈비</label>
+              <input id="current_monthly_rental_fee" name="00NdM00002HaFQk" type="number" min="0" step="1000" placeholder="예: 45000">
+            </div>
+            <div class="field">
+              <label for="current_contract_end_date">현재 계약 종료일</label>
+              <input id="current_contract_end_date" name="00NdM00002HaFQj" type="date">
+            </div>
+            <div class="field">
+              <label for="competitor_in_use">현재 사용 대안/경쟁사</label>
+              <input id="competitor_in_use" name="00NdM00002HYJFB" type="text" placeholder="예: 코웨이, SK매직">
+            </div>
+            <div class="field full">
+              <label for="pain_points">문의 및 요청사항</label>
+              <textarea id="pain_points" name="00NdM00002HYJFH" placeholder="추가적인 요청사항을 적어주세요."></textarea>
+            </div>
+          </div>
+        </section>
+
+        <div style="margin-top: 40px;">
+          <button type="submit" class="primary-button">상담 신청 보내기</button>
+        </div>
+      </form>
+    </main>
+  </div>
+
+  <div id="postcodeLayer" class="postcode-layer">
+    <div class="postcode-layer-shell">
+      <div style="padding:15px; border-bottom:1px solid #eee; display:flex; justify-content:space-between;">
+        <strong>주소 검색</strong>
+        <span onclick="closeLayer()" style="cursor:pointer; font-size:20px;">&times;</span>
+      </div>
+      <div id="layerRoot" style="height:450px;"></div>
+    </div>
+  </div>
+
+  <script>
+    const PERSONAL_COMPANY_PREFIX = '(개인) ';
+
+    function closeLayer() { document.getElementById('postcodeLayer').classList.remove('is-open'); }
+
+    function buildPersonalCompanyName() {
+      const fullName = document.getElementById('last_name').value.trim();
+      return (PERSONAL_COMPANY_PREFIX + (fullName || '이름없음')).slice(0, 255);
+    }
+
+    function syncCustomerTypeUi() {
+      const isPersonal = document.getElementById('customer_type').value === 'personal';
+      const companyFieldWrapper = document.getElementById('company_field_wrapper');
+      const personalCompanyHelp = document.getElementById('personal_company_help');
+      const companyInput = document.getElementById('company');
+
+      companyFieldWrapper.style.display = isPersonal ? 'none' : '';
+      personalCompanyHelp.style.display = isPersonal ? '' : 'none';
+      companyInput.required = !isPersonal;
+
+      if (isPersonal) {
+        companyInput.value = '';
+      }
+    }
+    
+    function openPostcodeSearch() {
+      const layer = document.getElementById('postcodeLayer');
+      new kakao.Postcode({
+        oncomplete: function(data) {
+          document.getElementById('postcode_display').value = data.zonecode;
+          document.getElementById('address_display').value = data.roadAddress || data.jibunAddress;
+          document.getElementById('state_display').value = data.sido;
+          document.getElementById('city_display').value = data.sigungu;
+          closeLayer();
+        },
+        width: '100%', height: '100%'
+      }).embed(document.getElementById('layerRoot'));
+      layer.classList.add('is-open');
+    }
+
+    document.getElementById('customer_type').addEventListener('change', syncCustomerTypeUi);
+    syncCustomerTypeUi();
+
+    document.getElementById('webToLeadForm').onsubmit = function() {
+      const addr = document.getElementById('address_display').value;
+      const detail = document.getElementById('detail_address_display').value;
+      const isPersonal = document.getElementById('customer_type').value === 'personal';
+
+      if (isPersonal) {
+        document.getElementById('company').value = buildPersonalCompanyName();
+      }
+
+      document.getElementById('street').value = addr + " " + detail;
+      document.getElementById('city').value = document.getElementById('city_display').value;
+      document.getElementById('state').value = document.getElementById('state_display').value;
+      document.getElementById('zip').value = document.getElementById('postcode_display').value;
+    };
+  </script>
+</body>
+</html>

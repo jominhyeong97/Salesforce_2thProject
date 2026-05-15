@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Subtotal</fullName>
+    <inlineHelpText>요금 및 조정 총액입니다. 세액은 포함되지 않습니다.</inlineHelpText>
+</CustomField>

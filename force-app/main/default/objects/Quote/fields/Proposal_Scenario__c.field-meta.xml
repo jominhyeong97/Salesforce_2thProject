@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Proposal_Scenario__c</fullName>
+    <label>견적 유형</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>렌탈안</fullName>
+                <default>false</default>
+                <label>렌탈안</label>
+            </value>
+            <value>
+                <fullName>구매안</fullName>
+                <default>false</default>
+                <label>구매안</label>
+            </value>
+            <value>
+                <fullName>렌탈/구매 병행</fullName>
+                <default>false</default>
+                <label>렌탈/구매 병행</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

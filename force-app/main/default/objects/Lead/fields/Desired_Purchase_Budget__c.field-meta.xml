@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Desired_Purchase_Budget__c</fullName>
+    <label>희망 구매 예산</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>50만원 미만</fullName>
+                <default>false</default>
+                <label>50만원 미만</label>
+            </value>
+            <value>
+                <fullName>50만-100만원</fullName>
+                <default>false</default>
+                <label>50만-100만원</label>
+            </value>
+            <value>
+                <fullName>100만-300만원</fullName>
+                <default>false</default>
+                <label>100만-300만원</label>
+            </value>
+            <value>
+                <fullName>300만원 이상</fullName>
+                <default>false</default>
+                <label>300만원 이상</label>
+            </value>
+            <value>
+                <fullName>미정</fullName>
+                <default>true</default>
+                <label>미정</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

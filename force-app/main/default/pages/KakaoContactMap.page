@@ -1,0 +1,217 @@
+<apex:page
+    applyBodyTag="false"
+    applyHtmlTag="false"
+    cache="false"
+    docType="html-5.0"
+    showHeader="false"
+    sidebar="false"
+    standardController="Contact"
+    standardStylesheets="false"
+>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>연락처 위치</title>
+    <style>
+        html,
+        body {
+            background: #ffffff;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            color: #181818;
+            font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+        }
+
+        .shell {
+            box-sizing: border-box;
+            display: grid;
+            gap: 10px;
+            height: 100%;
+            padding: 12px;
+        }
+
+        .meta {
+            display: grid;
+            gap: 4px;
+        }
+
+        .eyebrow {
+            color: #5c5c5c;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .title {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .address {
+            color: #3e3e3c;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .map {
+            border: 1px solid #d8dde6;
+            border-radius: 12px;
+            height: 300px;
+            overflow: hidden;
+        }
+
+        .empty-state {
+            align-items: center;
+            border: 1px dashed #c9c7c5;
+            border-radius: 12px;
+            color: #5c5c5c;
+            display: none;
+            font-size: 13px;
+            height: 300px;
+            justify-content: center;
+            padding: 20px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="shell">
+        <div class="meta">
+            <p class="eyebrow">Kakao Map</p>
+            <p class="title">{!Contact.Name}</p>
+            <p class="address" id="resolvedAddress"></p>
+        </div>
+        <div class="map" id="map"></div>
+        <div class="empty-state" id="emptyState"></div>
+    </div>
+
+    <script>
+        //<![CDATA[
+        function initializeContactMap() {
+            var segments = [
+                "{!JSENCODE(Contact.MailingStreet)}",
+                "{!JSENCODE(Contact.MailingCity)}",
+                "{!JSENCODE(Contact.MailingState)}",
+                "{!JSENCODE(Contact.MailingPostalCode)}",
+                "{!JSENCODE(Contact.MailingCountry)}"
+            ];
+            var contactName = "{!JSENCODE(Contact.Name)}" || "연락처";
+            var address = segments.filter(Boolean).join(" ").trim();
+            var resolvedAddress = document.getElementById("resolvedAddress");
+            var emptyState = document.getElementById("emptyState");
+            var mapContainer = document.getElementById("map");
+
+            function showEmptyState(message) {
+                resolvedAddress.textContent = address || "주소 정보 없음";
+                emptyState.textContent = message;
+                emptyState.style.display = "flex";
+                mapContainer.style.display = "none";
+            }
+
+            if (!address) {
+                showEmptyState("연락처의 우편 주소를 입력하면 위치 지도가 표시됩니다.");
+                return;
+            }
+
+            resolvedAddress.textContent = address;
+
+            if (
+                typeof kakao === "undefined" ||
+                !kakao.maps ||
+                !kakao.maps.services
+            ) {
+                showEmptyState(
+                    "카카오 지도 SDK를 불러오지 못했습니다. Kakao Developers 도메인 설정과 Salesforce CSP Trusted Site를 확인해 주세요."
+                );
+                return;
+            }
+
+            var map = new kakao.maps.Map(mapContainer, {
+                center: new kakao.maps.LatLng(37.5665, 126.978),
+                level: 3
+            });
+            var geocoder = new kakao.maps.services.Geocoder();
+
+            geocoder.addressSearch(address, function(result, status) {
+                if (status !== kakao.maps.services.Status.OK || !result.length) {
+                    showEmptyState("입력된 주소로 좌표를 찾지 못했습니다. 주소 형식을 다시 확인해 주세요.");
+                    return;
+                }
+
+                var coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+                var marker = new kakao.maps.Marker({
+                    map: map,
+                    position: coords
+                });
+                var infoWindow = new kakao.maps.InfoWindow({
+                    content:
+                        '<div style="padding:8px 12px;font-size:12px;text-align:center;">' +
+                        contactName +
+                        "</div>"
+                });
+
+                infoWindow.open(map, marker);
+                map.setCenter(coords);
+                window.setTimeout(function() {
+                    map.relayout();
+                    map.setCenter(coords);
+                }, 0);
+            });
+        }
+
+        function loadKakaoSdk(onReady) {
+            if (window.kakao && kakao.maps && kakao.maps.load) {
+                kakao.maps.load(onReady);
+                return;
+            }
+
+            var existingScript = document.querySelector('script[data-kakao-map-sdk="true"]');
+
+            if (existingScript) {
+                existingScript.addEventListener(
+                    "load",
+                    function() {
+                        if (window.kakao && kakao.maps && kakao.maps.load) {
+                            kakao.maps.load(onReady);
+                        } else {
+                            initializeContactMap();
+                        }
+                    },
+                    { once: true }
+                );
+                return;
+            }
+
+            var script = document.createElement("script");
+            script.src =
+                "https://dapi.kakao.com/v2/maps/sdk.js?appkey=" +
+                "{!JSENCODE($Label.Kakao_Map_JavaScript_Key)}" +
+                "&libraries=services&autoload=false";
+            script.async = true;
+            script.dataset.kakaoMapSdk = "true";
+            script.onload = function() {
+                if (window.kakao && kakao.maps && kakao.maps.load) {
+                    kakao.maps.load(onReady);
+                } else {
+                    initializeContactMap();
+                }
+            };
+            script.onerror = function() {
+                initializeContactMap();
+            };
+
+            document.head.appendChild(script);
+        }
+
+        loadKakaoSdk(initializeContactMap);
+        //]]>
+    </script>
+</body>
+</html>
+</apex:page>

@@ -1,0 +1,99 @@
+<template>
+    <lightning-card title="리드 관리" icon-name="standard:lead_list">
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="리드 관리 데이터를 불러오는 중입니다."></lightning-spinner>
+        </template>
+
+        <template if:true={errorMessage}>
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium slds-text-color_error">
+                {errorMessage}
+            </div>
+        </template>
+
+        <template if:true={data}>
+            <div class="slds-p-horizontal_medium slds-p-top_small">
+                <div class="slds-grid slds-wrap slds-gutters_small">
+                    <template for:each={metrics} for:item="metric">
+                        <div key={metric.label} class="slds-col slds-size_1-of-1 slds-large-size_1-of-3">
+                            <div class="slds-box slds-theme_default">
+                                <p class="slds-text-title_caps">{metric.label}</p>
+                                <p class="slds-text-heading_medium slds-m-top_x-small">{metric.value}</p>
+                                <p class="slds-text-body_small slds-text-color_weak slds-m-top_x-small">
+                                    {metric.helperText}
+                                </p>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <div class="slds-p-around_medium">
+                <lightning-tabset>
+                    <lightning-tab label="Hot Lead">
+                        <template if:true={hasHotLeads}>
+                            <lightning-datatable
+                                key-field="id"
+                                data={hotLeads}
+                                columns={leadColumns}
+                                hide-checkbox-column
+                            ></lightning-datatable>
+                        </template>
+                        <template if:false={hasHotLeads}>
+                            <div class="slds-p-vertical_medium slds-text-color_weak">
+                                즉시 대응할 Hot Lead가 없습니다.
+                            </div>
+                        </template>
+                    </lightning-tab>
+
+                    <lightning-tab label="Warm Lead">
+                        <template if:true={hasWarmLeads}>
+                            <lightning-datatable
+                                key-field="id"
+                                data={warmLeads}
+                                columns={leadColumns}
+                                hide-checkbox-column
+                            ></lightning-datatable>
+                        </template>
+                        <template if:false={hasWarmLeads}>
+                            <div class="slds-p-vertical_medium slds-text-color_weak">
+                                관심 유지가 필요한 Warm Lead가 없습니다.
+                            </div>
+                        </template>
+                    </lightning-tab>
+
+                    <lightning-tab label="견적 후속">
+                        <template if:true={hasQuoteFollowUps}>
+                            <lightning-datatable
+                                key-field="id"
+                                data={quoteFollowUps}
+                                columns={leadColumns}
+                                hide-checkbox-column
+                            ></lightning-datatable>
+                        </template>
+                        <template if:false={hasQuoteFollowUps}>
+                            <div class="slds-p-vertical_medium slds-text-color_weak">
+                                우선 후속이 필요한 견적 요청 리드가 없습니다.
+                            </div>
+                        </template>
+                    </lightning-tab>
+
+                    <lightning-tab label="지역별 리드 유입">
+                        <template if:true={hasRegionalInflows}>
+                            <lightning-datatable
+                                key-field="region"
+                                data={regionalInflows}
+                                columns={regionColumns}
+                                hide-checkbox-column
+                            ></lightning-datatable>
+                        </template>
+                        <template if:false={hasRegionalInflows}>
+                            <div class="slds-p-vertical_medium slds-text-color_weak">
+                                이번 달 집계된 리드 유입 데이터가 없습니다.
+                            </div>
+                        </template>
+                    </lightning-tab>
+                </lightning-tabset>
+            </div>
+        </template>
+    </lightning-card>
+</template>

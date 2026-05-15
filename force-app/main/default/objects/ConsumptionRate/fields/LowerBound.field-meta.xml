@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>LowerBound</fullName>
+    <inlineHelpText>이 소비율에 대한 최소 사용량.</inlineHelpText>
+    <trackHistory>false</trackHistory>
+</CustomField>

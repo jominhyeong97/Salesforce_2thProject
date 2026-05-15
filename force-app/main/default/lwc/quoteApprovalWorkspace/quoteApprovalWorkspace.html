@@ -1,0 +1,286 @@
+<template>
+    <lightning-card title="견적 결재 워크스페이스" icon-name="standard:approval">
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="결재 정보를 불러오는 중입니다."></lightning-spinner>
+        </template>
+
+        <template if:true={errorMessage}>
+            <div class="slds-p-around_medium slds-text-color_error">{errorMessage}</div>
+        </template>
+
+        <template if:true={workspace}>
+            <div class="shell">
+                <section class="panel no-print">
+                    <div class="panel-header">
+                        <div>
+                            <p class="eyebrow">Approval Request</p>
+                            <h2 class="panel-title">{workspace.approvalRequestName}</h2>
+                        </div>
+                        <lightning-badge label={workspace.status}></lightning-badge>
+                    </div>
+
+                    <div class="summary-grid">
+                        <div class="summary-item">
+                            <span class="summary-label">기회</span>
+                            <lightning-formatted-url
+                                value={workspace.opportunityUrl}
+                                label={workspace.opportunityName}
+                                target="_blank"
+                            ></lightning-formatted-url>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">견적</span>
+                            <lightning-formatted-url
+                                value={workspace.quoteUrl}
+                                label={workspace.quoteName}
+                                target="_blank"
+                            ></lightning-formatted-url>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">요청자</span>
+                            <span>{workspace.requesterName}</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">결재자</span>
+                            <span>{workspace.approverName}</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">요청 일시</span>
+                            <lightning-formatted-date-time
+                                value={workspace.requestedAt}
+                                year="numeric"
+                                month="2-digit"
+                                day="2-digit"
+                                hour="2-digit"
+                                minute="2-digit"
+                            ></lightning-formatted-date-time>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">처리 일시</span>
+                            <template if:true={workspace.respondedAt}>
+                                <lightning-formatted-date-time
+                                    value={workspace.respondedAt}
+                                    year="numeric"
+                                    month="2-digit"
+                                    day="2-digit"
+                                    hour="2-digit"
+                                    minute="2-digit"
+                                ></lightning-formatted-date-time>
+                            </template>
+                            <template if:false={workspace.respondedAt}>
+                                <span>-</span>
+                            </template>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="panel no-print">
+                    <div class="panel-header">
+                        <div>
+                            <p class="eyebrow">Request Detail</p>
+                            <h3 class="panel-title">결재 요청 상세</h3>
+                        </div>
+                    </div>
+                    <p class="detail-text">{workspace.requestDetail}</p>
+                </section>
+
+                <template if:true={showPdfPreview}>
+                    <section class="panel no-print">
+                        <div class="panel-header">
+                            <div>
+                                <p class="eyebrow">PDF Preview</p>
+                                <h3 class="panel-title">{workspace.quotePdfTitle}</h3>
+                            </div>
+                        </div>
+                        <div class="pdf-actions">
+                            <div class="pdf-toolbar">
+                                <lightning-button
+                                    label="표준 미리보기"
+                                    onclick={handleOpenFilePreview}
+                                ></lightning-button>
+                                <template if:true={workspace.quotePdfRecordUrl}>
+                                    <lightning-formatted-url
+                                        value={workspace.quotePdfRecordUrl}
+                                        label="파일 레코드 열기"
+                                        target="_blank"
+                                    ></lightning-formatted-url>
+                                </template>
+                            </div>
+                        </div>
+                    </section>
+                </template>
+
+                <template if:true={showActionPanel}>
+                    <section class="panel no-print">
+                        <div class="panel-header">
+                            <div>
+                                <p class="eyebrow">Decision</p>
+                                <h3 class="panel-title">결재 처리</h3>
+                            </div>
+                        </div>
+                        <lightning-textarea
+                            label="결재 의견"
+                            value={decisionComment}
+                            onchange={handleDecisionCommentChange}
+                        ></lightning-textarea>
+                        <div class="action-row">
+                            <lightning-button
+                                label="반려"
+                                variant="destructive"
+                                onclick={handleReject}
+                                disabled={actionInProgress}
+                            ></lightning-button>
+                            <lightning-button
+                                label="승인"
+                                variant="brand"
+                                onclick={handleApprove}
+                                disabled={actionInProgress}
+                            ></lightning-button>
+                        </div>
+                    </section>
+                </template>
+
+                <template if:true={workspace.decisionComment}>
+                    <section class="panel no-print">
+                        <div class="panel-header">
+                            <div>
+                                <p class="eyebrow">Decision Comment</p>
+                                <h3 class="panel-title">결재 의견</h3>
+                            </div>
+                        </div>
+                        <p class="detail-text">{workspace.decisionComment}</p>
+                    </section>
+                </template>
+
+                <template if:true={snapshot}>
+                    <section class="document">
+                        <div class="document-header">
+                            <div>
+                                <p class="eyebrow">Internal Document</p>
+                                <h2 class="document-title">견적 결재 기안문서</h2>
+                                <p class="document-subtitle">
+                                    승인 상태: <strong>{workspace.status}</strong>
+                                </p>
+                            </div>
+                            <template if:true={canPrintDocument}>
+                                <lightning-button
+                                    class="no-print"
+                                    label="기안문서 인쇄"
+                                    onclick={handlePrint}
+                                ></lightning-button>
+                            </template>
+                        </div>
+
+                        <div class="document-grid">
+                            <div class="document-card">
+                                <span class="summary-label">기회명</span>
+                                <strong>{snapshot.opportunity.name}</strong>
+                            </div>
+                            <div class="document-card">
+                                <span class="summary-label">거래처</span>
+                                <strong>{snapshot.opportunity.accountName}</strong>
+                            </div>
+                            <div class="document-card">
+                                <span class="summary-label">견적명</span>
+                                <strong>{snapshot.quote.name}</strong>
+                            </div>
+                            <div class="document-card">
+                                <span class="summary-label">견적 상태</span>
+                                <strong>{snapshot.quote.status}</strong>
+                            </div>
+                            <div class="document-card">
+                                <span class="summary-label">견적 유효일</span>
+                                <strong>{snapshot.quote.expirationDateDisplay}</strong>
+                            </div>
+                            <div class="document-card">
+                                <span class="summary-label">요청 일시</span>
+                                <strong>{snapshot.requestedAtDisplay}</strong>
+                            </div>
+                        </div>
+
+                        <section class="document-section">
+                            <h3 class="section-title">결재 요청 배경</h3>
+                            <p class="detail-text">{snapshot.requestDetail}</p>
+                        </section>
+
+                        <section class="document-section">
+                            <h3 class="section-title">견적 요약</h3>
+                            <div class="totals-grid">
+                                <div class="document-card">
+                                    <span class="summary-label">소계</span>
+                                    <strong>{snapshot.quote.subtotalDisplay}</strong>
+                                </div>
+                                <div class="document-card">
+                                    <span class="summary-label">세금</span>
+                                    <strong>{snapshot.quote.taxDisplay}</strong>
+                                </div>
+                                <div class="document-card">
+                                    <span class="summary-label">배송/기타</span>
+                                    <strong>{snapshot.quote.shippingHandlingDisplay}</strong>
+                                </div>
+                                <div class="document-card emphasis">
+                                    <span class="summary-label">합계</span>
+                                    <strong>{snapshot.quote.grandTotalDisplay}</strong>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="document-section">
+                            <h3 class="section-title">견적 품목</h3>
+                            <template if:true={snapshot.quoteLines.length}>
+                                <table class="line-table">
+                                    <thead>
+                                        <tr>
+                                            <th>품목</th>
+                                            <th>수량</th>
+                                            <th>단가</th>
+                                            <th>금액</th>
+                                            <th>설명</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <template for:each={snapshot.quoteLines} for:item="line">
+                                            <tr key={line.key}>
+                                                <td>{line.productName}</td>
+                                                <td>{line.quantityDisplay}</td>
+                                                <td>{line.unitPriceDisplay}</td>
+                                                <td>{line.totalPriceDisplay}</td>
+                                                <td>{line.description}</td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                            </template>
+                            <template if:false={snapshot.quoteLines.length}>
+                                <p class="empty-state">연결된 견적 품목이 없습니다.</p>
+                            </template>
+                        </section>
+
+                        <section class="document-section signature-section">
+                            <div>
+                                <h3 class="section-title">결재자 확인</h3>
+                                <p class="detail-text">
+                                    {workspace.approverName}
+                                    <template if:true={workspace.approverTitle}>
+                                        ({workspace.approverTitle})
+                                    </template>
+                                </p>
+                                <template if:true={workspace.decisionComment}>
+                                    <p class="detail-text">의견: {workspace.decisionComment}</p>
+                                </template>
+                            </div>
+                            <div class="signature-box">
+                                <template if:true={showSealImage}>
+                                    <img class="seal-image" src={workspace.sealImageUrl} alt="직인" />
+                                </template>
+                                <template if:true={showSealFallback}>
+                                    <div class="seal-fallback">APPROVED</div>
+                                </template>
+                            </div>
+                        </section>
+                    </section>
+                </template>
+            </div>
+        </template>
+    </lightning-card>
+</template>

@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sales_Task_Type__c</fullName>
+    <label>영업 Task 유형</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <trackHistory>false</trackHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>초기 상담</fullName>
+                <default>true</default>
+                <label>초기 상담</label>
+            </value>
+            <value>
+                <fullName>견적 후속</fullName>
+                <default>false</default>
+                <label>견적 후속</label>
+            </value>
+            <value>
+                <fullName>계약 갱신</fullName>
+                <default>false</default>
+                <label>계약 갱신</label>
+            </value>
+            <value>
+                <fullName>구매 전환</fullName>
+                <default>false</default>
+                <label>구매 전환</label>
+            </value>
+            <value>
+                <fullName>재공략</fullName>
+                <default>false</default>
+                <label>재공략</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

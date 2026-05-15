@@ -1,0 +1,32 @@
+.THIS.shell {
+    display: grid;
+    gap: 1rem;
+}
+
+.THIS .header {
+    margin-bottom: 0.5rem;
+}
+
+.THIS .title {
+    color: #16324f;
+    font-size: 1.15rem;
+    margin: 0;
+}
+
+.THIS .field-grid {
+    display: grid;
+    gap: 1rem 0.75rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.THIS .footer-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+
+@media (max-width: 640px) {
+    .THIS .footer-actions {
+        flex-direction: column;
+    }
+}

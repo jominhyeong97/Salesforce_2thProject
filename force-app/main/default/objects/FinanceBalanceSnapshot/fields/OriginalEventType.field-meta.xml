@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>OriginalEventType</fullName>
+    <inlineHelpText>융자가 생성된 경우 융자의 이벤트 유형입니다.</inlineHelpText>
+</CustomField>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Offset</fullName>
+    <inlineHelpText>이벤트 전후의 기간 또는 연락관과 커뮤니케이션해야 하는 특정 요일입니다. 시간 단위를 단위에 설정하십시오. 예를 들어 단위를 &quot;주&quot;로 및 오프셋을 &quot;-4&quot;로 설정하면 이벤트 4주 전에 연락관과 커뮤니케이션하며 오프셋을 &quot;4&quot;로 설정할 경우에는 이벤트 4주 후에 연락관과 커뮤니케이션합니다. 단위를 &quot;요일&quot;로 및 오프셋을 &quot;1&quot;로 설정하면 월요일에 연락관과 커뮤니케이션하며, 오프셋을 &quot;7&quot;로 설정하면 일요일에 연락관과 커뮤니케이션합니다.</inlineHelpText>
+    <trackHistory>false</trackHistory>
+</CustomField>

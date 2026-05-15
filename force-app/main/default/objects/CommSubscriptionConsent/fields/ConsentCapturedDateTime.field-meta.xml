@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ConsentCapturedDateTime</fullName>
+    <inlineHelpText>동의한 날짜 및 시간입니다.</inlineHelpText>
+    <trackHistory>false</trackHistory>
+</CustomField>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>CommunicationSubscriptionId</fullName>
+    <inlineHelpText>커뮤니케이션 가입 레코드가 커뮤니케이션 가입 채널 유형에 연결되었습니다.</inlineHelpText>
+    <trackHistory>false</trackHistory>
+    <type>Lookup</type>
+</CustomField>

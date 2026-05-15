@@ -1,0 +1,362 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>66.0</apiVersion>
+    <areMetricsLoggedToDataCloud>false</areMetricsLoggedToDataCloud>
+    <customProperties>
+        <name>ScreenProgressIndicator</name>
+        <value>
+            <stringValue>{&quot;location&quot;:&quot;top&quot;,&quot;type&quot;:&quot;simple&quot;}</stringValue>
+        </value>
+    </customProperties>
+    <decisions>
+        <name>Is_Existing_Customer</name>
+        <label>기존 고객 조회</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <defaultConnector>
+            <targetReference>Create_New_Lead</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>신규 고객</defaultConnectorLabel>
+        <rules>
+            <name>Existing_Customer</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>IsCustommer.Id</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Create_Lead_with_Existing_Info</targetReference>
+            </connector>
+            <label>기존 고객 정보 활용</label>
+        </rules>
+    </decisions>
+    <description>리드 생성 시뮬레이션</description>
+    <environments>Default</environments>
+    <formulas>
+        <name>Formatted_Phone_Number</name>
+        <dataType>String</dataType>
+        <expression>IF(
+    /* 하이픈이 이미 포함되어 있는지 확인 */
+    CONTAINS({!GetPhone_No}, &quot;-&quot;), 
+    {!GetPhone_No},
+    /* 하이픈이 없는 11자리 숫자인 경우 포맷팅 (01012345678 -&gt; 010-1234-5678) */
+    IF(LEN({!GetPhone_No}) = 11,
+        LEFT({!GetPhone_No}, 3) &amp; &quot;-&quot; &amp; 
+        MID({!GetPhone_No}, 4, 4) &amp; &quot;-&quot; &amp; 
+        RIGHT({!GetPhone_No}, 4),
+        /* 그 외(10자리 등)의 경우 */
+        IF(LEN({!GetPhone_No}) = 10,
+            LEFT({!GetPhone_No}, 3) &amp; &quot;-&quot; &amp; 
+            MID({!GetPhone_No}, 4, 3) &amp; &quot;-&quot; &amp; 
+            RIGHT({!GetPhone_No}, 4),
+            {!GetPhone_No}
+        )
+    )
+)</expression>
+    </formulas>
+    <formulas>
+        <name>Task_Due_Date</name>
+        <dataType>Date</dataType>
+        <expression>Today() + 7</expression>
+    </formulas>
+    <interviewLabel>SCF_ {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>SCF_Lead_Inbound_Simulation</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>CanvasMode</name>
+        <value>
+            <stringValue>AUTO_LAYOUT_CANVAS</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <recordCreates>
+        <name>Create_Lead_with_Existing_Info</name>
+        <label>기존 정보 기반 리드 생성</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Create_Task_Existing</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Company</field>
+            <value>
+                <elementReference>IsCustommer.Account.Name</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>LastName</field>
+            <value>
+                <elementReference>IsCustommer.LastName</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>LeadSource</field>
+            <value>
+                <stringValue>Phone Inquiry</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>MobilePhone</field>
+            <value>
+                <elementReference>Formatted_Phone_Number</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Lead</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordCreates>
+        <name>Create_New_Lead</name>
+        <label>신규 리드 생성</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Create_Task_New</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>Company</field>
+            <value>
+                <stringValue>&quot;확인 필요&quot;</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>LastName</field>
+            <value>
+                <elementReference>Lead_Name_Template</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>MobilePhone</field>
+            <value>
+                <elementReference>Formatted_Phone_Number</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Lead</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordCreates>
+        <name>Create_Task_Existing</name>
+        <label>상담 작업 생성(기존)</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Success_Screen_A</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>ActivityDate</field>
+            <value>
+                <elementReference>Task_Due_Date</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Priority</field>
+            <value>
+                <stringValue>Normal</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>Not Started</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <stringValue>[전화] 기존 고객 재문의 대응</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WhoId</field>
+            <value>
+                <elementReference>Create_Lead_with_Existing_Info</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Task</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordCreates>
+        <name>Create_Task_New</name>
+        <label>상담 작업 생성(신규)</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>Success_Screen_B</targetReference>
+        </connector>
+        <inputAssignments>
+            <field>ActivityDate</field>
+            <value>
+                <elementReference>Task_Due_Date</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Priority</field>
+            <value>
+                <stringValue>Normal</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status</field>
+            <value>
+                <stringValue>Not Started</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Subject</field>
+            <value>
+                <stringValue>[전화] 기존 고객 재문의 대응</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>WhoId</field>
+            <value>
+                <elementReference>Create_New_Lead</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Task</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordCreates>
+    <recordLookups>
+        <name>IsCustommer</name>
+        <label>기존 고객 조회</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Is_Existing_Customer</targetReference>
+        </connector>
+        <filterLogic>or</filterLogic>
+        <filters>
+            <field>HomePhone</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Formatted_Phone_Number</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>MobilePhone</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Formatted_Phone_Number</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>OtherPhone</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Formatted_Phone_Number</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Contact</object>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <screens>
+        <name>GetPhone_Number_Screen</name>
+        <label>전화번호 입력화면</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <allowBack>true</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <backButtonLabel>취소</backButtonLabel>
+        <connector>
+            <targetReference>IsCustommer</targetReference>
+        </connector>
+        <fields>
+            <name>GetPhone_No</name>
+            <dataType>String</dataType>
+            <fieldText>전화번호 입력</fieldText>
+            <fieldType>InputField</fieldType>
+            <inputsOnNextNavToAssocScrn>UseStoredValues</inputsOnNextNavToAssocScrn>
+            <isRequired>true</isRequired>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
+        </fields>
+        <nextOrFinishButtonLabel>확인</nextOrFinishButtonLabel>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Success_Screen_A</name>
+        <label>완료 화면</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>Success_Massage_A</name>
+            <fieldText>&lt;p&gt;&lt;strong&gt;✅ 리드 생성 완료!&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;기존 고객 정보가 성공적으로 매핑되었으며, 담당자에게 &lt;strong&gt;7일 이내 대응&lt;/strong&gt; 작업(Task)이 할당되었습니다.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
+        </fields>
+        <nextOrFinishButtonLabel>확인</nextOrFinishButtonLabel>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <screens>
+        <name>Success_Screen_B</name>
+        <label>완료 화면2</label>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <fields>
+            <name>Success_Massage_B</name>
+            <fieldText>&lt;p&gt;&lt;strong&gt;✅ 리드 생성 완료!&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;기존 고객 정보가 성공적으로 매핑되었으며, 담당자에게 &lt;strong&gt;7일 이내 대응&lt;/strong&gt; 작업(Task)이 할당되었습니다.&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+            <styleProperties>
+                <verticalAlignment>
+                    <stringValue>top</stringValue>
+                </verticalAlignment>
+                <width>
+                    <stringValue>12</stringValue>
+                </width>
+            </styleProperties>
+        </fields>
+        <nextOrFinishButtonLabel>확인</nextOrFinishButtonLabel>
+        <showFooter>true</showFooter>
+        <showHeader>true</showHeader>
+    </screens>
+    <start>
+        <locationX>0</locationX>
+        <locationY>0</locationY>
+        <connector>
+            <targetReference>GetPhone_Number_Screen</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <textTemplates>
+        <name>Lead_Name_Template</name>
+        <isViewedAsPlainText>true</isViewedAsPlainText>
+        <text>신규 고객({!Formatted_Phone_Number})</text>
+    </textTemplates>
+</Flow>

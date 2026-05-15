@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>MatchingAttribute</fullName>
+    <inlineHelpText>레코드에서 같은 일치 특성 값을 공유할 경우 사용이 소비 일정과 일치됩니다.</inlineHelpText>
+    <trackHistory>false</trackHistory>
+</CustomField>

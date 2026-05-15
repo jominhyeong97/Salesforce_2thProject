@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>AquaQuotePdfController</members>
+        <members>QuotePdfGenerationService</members>
+        <members>QuotePdfGenerationServiceTest</members>
+        <name>ApexClass</name>
+    </types>
+    <types>
+        <members>FlexiPage6</members>
+        <name>FlexiPage</name>
+    </types>
+    <types>
+        <members>Quote-견적 레이아웃</members>
+        <name>Layout</name>
+    </types>
+    <types>
+        <members>CustomLabels</members>
+        <name>CustomLabels</name>
+    </types>
+    <types>
+        <members>quotePdfGenerator</members>
+        <name>LightningComponentBundle</name>
+    </types>
+    <types>
+        <members>AquaQuotePdf</members>
+        <name>ApexPage</name>
+    </types>
+    <types>
+        <members>Quote.Generate_Aqua_PDF</members>
+        <name>QuickAction</name>
+    </types>
+    <version>66.0</version>
+</Package>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ProcessingOrder</fullName>
+    <inlineHelpText>여러 배율 전반에서 사용률을 처리하는 순서. 소비율은 가장 낮은 프로세싱 순서로 평가됩니다.</inlineHelpText>
+    <trackHistory>false</trackHistory>
+</CustomField>

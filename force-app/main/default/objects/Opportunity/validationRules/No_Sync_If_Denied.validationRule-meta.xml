@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>No_Sync_If_Denied</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+    ISCHANGED(SyncedQuoteId),
+    NOT(ISBLANK(SyncedQuoteId)),
+    ISPICKVAL(SyncedQuote.Status, &quot;Denied&quot;)
+)</errorConditionFormula>
+    <errorDisplayField>SyncedQuoteId</errorDisplayField>
+    <errorMessage>&quot;선택하신 견적서가 &apos;견적 반려&apos; 상태입니다. 반려된 견적은 기회와 동기화할 수 없으니, 견적 상태를 확인하거나 다른 견적서를 선택해 주세요.&quot;</errorMessage>
+</ValidationRule>

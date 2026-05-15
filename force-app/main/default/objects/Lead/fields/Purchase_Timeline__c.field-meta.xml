@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Purchase_Timeline__c</fullName>
+    <label>도입 희망 시점</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>즉시</fullName>
+                <default>false</default>
+                <label>즉시</label>
+            </value>
+            <value>
+                <fullName>1개월 이내</fullName>
+                <default>false</default>
+                <label>1개월 이내</label>
+            </value>
+            <value>
+                <fullName>3개월 이내</fullName>
+                <default>false</default>
+                <label>3개월 이내</label>
+            </value>
+            <value>
+                <fullName>6개월 이내</fullName>
+                <default>false</default>
+                <label>6개월 이내</label>
+            </value>
+            <value>
+                <fullName>6개월 이후</fullName>
+                <default>false</default>
+                <label>6개월 이후</label>
+            </value>
+            <value>
+                <fullName>미정</fullName>
+                <default>true</default>
+                <label>미정</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

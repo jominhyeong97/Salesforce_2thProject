@@ -1,0 +1,261 @@
+<template>
+    <lightning-card title="영업 홈 요약" icon-name="standard:lead_list">
+        <lightning-button-icon
+            slot="actions"
+            icon-name="utility:refresh"
+            alternative-text="새로고침"
+            title="새로고침"
+            onclick={handleRefresh}
+            disabled={isBusy}
+        ></lightning-button-icon>
+
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="영업 요약을 불러오는 중입니다."></lightning-spinner>
+        </template>
+
+        <template if:true={errorMessage}>
+            <div class="slds-p-around_medium slds-text-color_error">{errorMessage}</div>
+        </template>
+
+        <template if:true={hasData}>
+            <div class="shell">
+                <section class="metrics-grid">
+                    <template for:each={metrics} for:item="card">
+                        <article key={card.key} class={card.cardClass}>
+                            <p class="metric-label">{card.label}</p>
+                            <p class="metric-value">{card.value}</p>
+                            <p class="metric-helper">{card.helperText}</p>
+                        </article>
+                    </template>
+                </section>
+
+                <div class="workspace-grid">
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <p class="eyebrow">Immediate Focus</p>
+                                <h2 class="panel-title">오늘 처리할 Hot Lead</h2>
+                            </div>
+                        </div>
+                        <template if:true={hasHotLeads}>
+                            <div class="list">
+                                <template for:each={hotLeads} for:item="lead">
+                                    <article key={lead.key} class="item">
+                                        <div class="item-main">
+                                            <div class="item-top">
+                                                <lightning-formatted-url
+                                                    value={lead.recordUrl}
+                                                    label={lead.recordLabel}
+                                                    target="_blank"
+                                                ></lightning-formatted-url>
+                                                <span class={lead.priorityClass}>
+                                                    {lead.salesPriority}
+                                                </span>
+                                            </div>
+                                            <p class="item-meta">{lead.metaLine}</p>
+                                            <p class="item-summary">{lead.salesActionSummary}</p>
+                                        </div>
+                                        <div class="item-aside">
+                                            <span class="score-pill">{lead.scoreLabel}</span>
+                                            <span class="date-label">{lead.windowLabel}</span>
+                                        </div>
+                                    </article>
+                                </template>
+                            </div>
+                        </template>
+                        <template if:false={hasHotLeads}>
+                            <p class="empty-state">오늘 즉시 확인할 Hot Lead가 없습니다.</p>
+                        </template>
+                    </section>
+
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <p class="eyebrow">Task Window</p>
+                                <h2 class="panel-title">SLA 임박 Task</h2>
+                            </div>
+                        </div>
+                        <template if:true={hasSlaTasks}>
+                            <div class="list">
+                                <template for:each={slaTasks} for:item="task">
+                                    <article key={task.key} class="item">
+                                        <div class="item-main">
+                                            <div class="item-top">
+                                                <lightning-formatted-url
+                                                    value={task.recordUrl}
+                                                    label={task.subject}
+                                                    target="_blank"
+                                                ></lightning-formatted-url>
+                                                <span class={task.priorityClass}>
+                                                    {task.priority}
+                                                </span>
+                                            </div>
+                                            <p class="item-meta">{task.metaLine}</p>
+                                            <template if:true={task.relatedRecordUrl}>
+                                                <p class="item-link">
+                                                    <lightning-formatted-url
+                                                        value={task.relatedRecordUrl}
+                                                        label={task.relatedLabel}
+                                                        target="_blank"
+                                                    ></lightning-formatted-url>
+                                                </p>
+                                            </template>
+                                        </div>
+                                        <div class="item-aside">
+                                            <span class="date-label">{task.activityDateLabel}</span>
+                                        </div>
+                                    </article>
+                                </template>
+                            </div>
+                        </template>
+                        <template if:false={hasSlaTasks}>
+                            <p class="empty-state">SLA 임박 Task가 없습니다.</p>
+                        </template>
+                    </section>
+
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <p class="eyebrow">Contract Desk</p>
+                                <h2 class="panel-title">계약 종료 30일 이내 고객</h2>
+                            </div>
+                        </div>
+                        <template if:true={hasExpiringContracts}>
+                            <div class="list">
+                                <template for:each={expiringContracts} for:item="contract">
+                                    <article key={contract.key} class="item">
+                                        <div class="item-main">
+                                            <div class="item-top">
+                                                <lightning-formatted-url
+                                                    value={contract.recordUrl}
+                                                    label={contract.recordLabel}
+                                                    target="_blank"
+                                                ></lightning-formatted-url>
+                                                <span class="routing-pill">{contract.status}</span>
+                                            </div>
+                                            <p class="item-meta">{contract.metaLine}</p>
+                                        </div>
+                                        <div class="item-aside">
+                                            <span class="date-label">{contract.endDateLabel}</span>
+                                        </div>
+                                    </article>
+                                </template>
+                            </div>
+                        </template>
+                        <template if:false={hasExpiringContracts}>
+                            <p class="empty-state">30일 이내 종료되는 계약이 없습니다.</p>
+                        </template>
+                    </section>
+
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <p class="eyebrow">Approval Queue</p>
+                                <h2 class="panel-title">이번 달 견적 승인 대기</h2>
+                            </div>
+                        </div>
+                        <template if:true={hasPendingApprovals}>
+                            <div class="list">
+                                <template for:each={pendingApprovals} for:item="approval">
+                                    <article key={approval.key} class="item">
+                                        <div class="item-main">
+                                            <div class="item-top">
+                                                <lightning-formatted-url
+                                                    value={approval.recordUrl}
+                                                    label={approval.recordLabel}
+                                                    target="_blank"
+                                                ></lightning-formatted-url>
+                                                <span class="score-pill">승인대기</span>
+                                            </div>
+                                            <p class="item-meta">{approval.metaLine}</p>
+                                        </div>
+                                        <div class="item-aside">
+                                            <span class="date-label">{approval.requestedAtLabel}</span>
+                                        </div>
+                                    </article>
+                                </template>
+                            </div>
+                        </template>
+                        <template if:false={hasPendingApprovals}>
+                            <p class="empty-state">이번 달 승인 대기 중인 견적 요청이 없습니다.</p>
+                        </template>
+                    </section>
+
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <p class="eyebrow">Re-engagement</p>
+                                <h2 class="panel-title">Closed Lost 재공략 예정</h2>
+                            </div>
+                        </div>
+                        <template if:true={hasReengagementTasks}>
+                            <div class="list">
+                                <template for:each={reengagementTasks} for:item="task">
+                                    <article key={task.key} class="item">
+                                        <div class="item-main">
+                                            <div class="item-top">
+                                                <lightning-formatted-url
+                                                    value={task.recordUrl}
+                                                    label={task.subject}
+                                                    target="_blank"
+                                                ></lightning-formatted-url>
+                                                <span class={task.priorityClass}>
+                                                    {task.priority}
+                                                </span>
+                                            </div>
+                                            <p class="item-meta">{task.metaLine}</p>
+                                            <template if:true={task.relatedRecordUrl}>
+                                                <p class="item-link">
+                                                    <lightning-formatted-url
+                                                        value={task.relatedRecordUrl}
+                                                        label={task.relatedLabel}
+                                                        target="_blank"
+                                                    ></lightning-formatted-url>
+                                                </p>
+                                            </template>
+                                        </div>
+                                        <div class="item-aside">
+                                            <span class="date-label">{task.activityDateLabel}</span>
+                                        </div>
+                                    </article>
+                                </template>
+                            </div>
+                        </template>
+                        <template if:false={hasReengagementTasks}>
+                            <p class="empty-state">예정된 재공략 Task가 없습니다.</p>
+                        </template>
+                    </section>
+
+                    <section class="panel">
+                        <div class="panel-header">
+                            <div>
+                                <p class="eyebrow">Funnel Snapshot</p>
+                                <h2 class="panel-title">지역별 리드 유입</h2>
+                            </div>
+                        </div>
+                        <template if:true={hasRegionalInflows}>
+                            <div class="list">
+                                <template for:each={regionalInflows} for:item="region">
+                                    <article key={region.key} class="item region-item">
+                                        <div class="item-main">
+                                            <div class="item-top">
+                                                <span class="region-label">{region.region}</span>
+                                                <span class="count-pill">{region.countLabel}</span>
+                                            </div>
+                                            <div class="region-track">
+                                                <span class="region-bar" style={region.barStyle}></span>
+                                            </div>
+                                        </div>
+                                    </article>
+                                </template>
+                            </div>
+                        </template>
+                        <template if:false={hasRegionalInflows}>
+                            <p class="empty-state">이번 달 집계된 리드 유입 데이터가 없습니다.</p>
+                        </template>
+                    </section>
+                </div>
+            </div>
+        </template>
+    </lightning-card>
+</template>

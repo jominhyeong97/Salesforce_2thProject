@@ -1,0 +1,115 @@
+<template>
+    <lightning-card title="리드 영업 요약" icon-name="standard:lead">
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="리드 영업 요약을 불러오는 중입니다."></lightning-spinner>
+        </template>
+
+        <template if:true={errorMessage}>
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium slds-text-color_error">
+                {errorMessage}
+            </div>
+        </template>
+
+        <template if:true={hasRecord}>
+            <div class="slds-p-horizontal_medium slds-p-top_small">
+                <div class="slds-grid slds-wrap slds-gutters_small">
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_3-of-12">
+                        <div class="slds-box slds-theme_default slds-text-align_center summary-box">
+                            <p class="slds-text-title_caps">리드 점수</p>
+                            <p class="slds-text-heading_large slds-m-top_x-small">{scoreLabel}</p>
+                        </div>
+                    </div>
+                    <div class="slds-col slds-size_1-of-1 slds-large-size_9-of-12">
+                        <div class="slds-box slds-theme_default summary-box">
+                            <div class="slds-grid slds-wrap slds-gutters_x-small">
+                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                                    <p class="slds-text-title_caps">긴급도</p>
+                                    <p class="field-value slds-m-top_x-small">{priority}</p>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2">
+                                    <p class="slds-text-title_caps">상담 유형</p>
+                                    <p class="field-value slds-m-top_x-small">{consultationType}</p>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2 slds-m-top_small">
+                                    <p class="slds-text-title_caps">라우팅 그룹</p>
+                                    <p class="field-value slds-m-top_x-small">{routingGroup}</p>
+                                </div>
+                                <div class="slds-col slds-size_1-of-1 slds-large-size_1-of-2 slds-m-top_small">
+                                    <p class="slds-text-title_caps">계약 종료 윈도우</p>
+                                    <p class="field-value slds-m-top_x-small">{contractEndWindow}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <template if:true={actionSummary}>
+                <div class="slds-p-horizontal_medium slds-p-top_small">
+                    <div class="slds-box slds-theme_default summary-box">
+                        <p class="slds-text-title_caps">영업 액션 요약</p>
+                        <p class="field-value slds-m-top_x-small">{actionSummary}</p>
+                    </div>
+                </div>
+            </template>
+
+            <div class="slds-p-around_medium">
+                <section class="section-block">
+                    <div class="slds-text-title_bold slds-m-bottom_x-small">자동 분류</div>
+                    <div class="slds-grid slds-wrap slds-gutters_small">
+                        <template for:each={classificationFields} for:item="field">
+                            <div key={field.key} class={field.className}>
+                                <div class="field-block">
+                                    <p class="slds-text-title_caps">{field.label}</p>
+                                    <p class="field-value slds-m-top_x-small">{field.value}</p>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </section>
+
+                <section class="section-block">
+                    <div class="slds-text-title_bold slds-m-bottom_x-small">고객 맥락</div>
+                    <div class="slds-grid slds-wrap slds-gutters_small">
+                        <template for:each={contextFields} for:item="field">
+                            <div key={field.key} class={field.className}>
+                                <div class="field-block">
+                                    <p class="slds-text-title_caps">{field.label}</p>
+                                    <p class="field-value slds-m-top_x-small">{field.value}</p>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </section>
+
+                <section class="section-block">
+                    <div class="slds-text-title_bold slds-m-bottom_x-small">가격 시뮬레이션</div>
+                    <div class="slds-grid slds-wrap slds-gutters_small">
+                        <template for:each={pricingFields} for:item="field">
+                            <div key={field.key} class={field.className}>
+                                <div class="field-block">
+                                    <p class="slds-text-title_caps">{field.label}</p>
+                                    <p class="field-value slds-m-top_x-small">{field.value}</p>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </section>
+
+                <section class="section-block">
+                    <div class="slds-text-title_bold slds-m-bottom_x-small">유입 및 지역 정보</div>
+                    <div class="slds-grid slds-wrap slds-gutters_small">
+                        <template for:each={inboundFields} for:item="field">
+                            <div key={field.key} class={field.className}>
+                                <div class="field-block">
+                                    <p class="slds-text-title_caps">{field.label}</p>
+                                    <p class="field-value slds-m-top_x-small">{field.value}</p>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                </section>
+            </div>
+        </template>
+    </lightning-card>
+</template>

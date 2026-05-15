@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Require_Lost_Analysis_On_Closed_Lost</fullName>
+    <active>true</active>
+    <description>수주 실패 단계에서는 최소한의 실패 분석 정보를 강제합니다.</description>
+    <errorConditionFormula>AND(
+ISPICKVAL(StageName, "수주 실패"),
+OR(
+ISBLANK(TEXT(Lost_Reason_Primary__c)),
+ISBLANK(Lost_Reason_Detail__c),
+ISBLANK(TEXT(Reopen_Potential__c))
+)
+)</errorConditionFormula>
+    <errorDisplayField>StageName</errorDisplayField>
+    <errorMessage>수주 실패 단계에서는 1차 실패 사유, 실패 상세 내용, 재공략 가능성을 모두 입력해야 합니다.</errorMessage>
+</ValidationRule>

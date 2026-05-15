@@ -1,0 +1,25 @@
+:host {
+    display: block;
+}
+
+.workspace {
+    display: grid;
+    row-gap: 1rem;
+}
+
+.lower-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(18rem, 1fr);
+    gap: 1rem;
+    align-items: start;
+}
+
+.section {
+    min-width: 0;
+}
+
+@media (max-width: 64rem) {
+    .lower-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}

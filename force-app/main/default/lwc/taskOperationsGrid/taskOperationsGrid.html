@@ -1,0 +1,16 @@
+<template>
+    <template if:true={hasRows}>
+        <lightning-datatable
+            key-field="id"
+            data={normalizedRows}
+            columns={columns}
+            hide-checkbox-column
+            wrap-text-max-lines="3"
+        ></lightning-datatable>
+    </template>
+    <template if:false={hasRows}>
+        <div class="slds-p-vertical_medium slds-text-color_weak">
+            현재 표시할 Task가 없습니다.
+        </div>
+    </template>
+</template>

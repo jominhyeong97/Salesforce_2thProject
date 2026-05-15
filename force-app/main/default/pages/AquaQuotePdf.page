@@ -1,0 +1,467 @@
+<apex:page
+    controller="AquaQuotePdfController"
+    renderAs="pdf"
+    showHeader="false"
+    sidebar="false"
+    standardStylesheets="false"
+    applyBodyTag="false"
+    applyHtmlTag="false"
+    docType="html-5.0">
+
+<html lang="ko">
+<head>
+    <style type="text/css">
+        @page {
+            size: A4;
+            margin: 14mm 13mm 12mm 13mm;
+        }
+
+        body {
+            font-family: Arial Unicode MS, Helvetica, sans-serif;
+            color: #222;
+            font-size: 9pt;
+            line-height: 1.35;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .header-table td {
+            vertical-align: top;
+        }
+
+        .company-name {
+            font-size: 18pt;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .doc-title {
+            font-size: 22pt;
+            font-weight: bold;
+            text-align: right;
+            letter-spacing: 4px;
+        }
+
+        .doc-subtitle {
+            margin-top: 4px;
+            color: #666;
+            font-size: 8.5pt;
+        }
+
+        .meta-table {
+            margin-top: 10px;
+            border-top: 2px solid #222;
+            border-bottom: 1px solid #222;
+        }
+
+        .meta-table th,
+        .meta-table td {
+            border: 1px solid #cfcfcf;
+            padding: 5px 7px;
+        }
+
+        .meta-table th {
+            width: 16%;
+            background: #f3f3f3;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .section-title {
+            margin-top: 12px;
+            margin-bottom: 5px;
+            padding: 4px 7px;
+            background: #333;
+            color: #fff;
+            font-weight: bold;
+            font-size: 9.5pt;
+        }
+
+        .info-table th,
+        .info-table td {
+            border: 1px solid #cfcfcf;
+            padding: 5px 7px;
+            vertical-align: top;
+        }
+
+        .info-table th {
+            width: 16%;
+            background: #f7f7f7;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .summary-table th,
+        .summary-table td {
+            border: 1px solid #cfcfcf;
+            padding: 5px 7px;
+        }
+
+        .summary-table th {
+            background: #f7f7f7;
+            text-align: center;
+        }
+
+        .items-table {
+            margin-top: 4px;
+            border-top: 2px solid #222;
+            border-bottom: 1px solid #222;
+        }
+
+        .items-table th,
+        .items-table td {
+            border: 1px solid #cfcfcf;
+            padding: 5px 6px;
+        }
+
+        .items-table th {
+            background: #f3f3f3;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .center {
+            text-align: center;
+        }
+
+        .right {
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .product-code {
+            color: #777;
+            font-size: 8pt;
+        }
+
+        .totals-wrap {
+            margin-top: 8px;
+        }
+
+        .totals-left {
+            width: 58%;
+            vertical-align: top;
+            padding-right: 8px;
+        }
+
+        .totals-right {
+            width: 42%;
+            vertical-align: top;
+        }
+
+        .note-box {
+            border: 1px solid #cfcfcf;
+            min-height: 74px;
+            padding: 7px;
+        }
+
+        .note-title {
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .totals-table th,
+        .totals-table td {
+            border: 1px solid #cfcfcf;
+            padding: 5px 7px;
+        }
+
+        .totals-table th {
+            background: #f7f7f7;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .grand-total th,
+        .grand-total td {
+            background: #222;
+            color: #fff;
+            font-weight: bold;
+            font-size: 10pt;
+        }
+
+        .footer-table {
+            margin-top: 12px;
+            border-top: 1px solid #222;
+        }
+
+        .footer-table td {
+            padding-top: 6px;
+            font-size: 8pt;
+            color: #555;
+            vertical-align: top;
+        }
+
+        .stamp-box {
+            border: 1px solid #999;
+            width: 90px;
+            height: 42px;
+            text-align: center;
+            vertical-align: middle;
+            color: #777;
+            font-size: 8pt;
+        }
+
+        .empty-state {
+            color: #777;
+        }
+    </style>
+</head>
+
+<body>
+    <table class="header-table">
+        <tr>
+            <td style="width:55%;">
+                <div class="company-name">{!brandCompanyName}</div>
+                <div class="doc-subtitle">{!brandSubtitle}</div>
+            </td>
+            <td style="width:45%;">
+                <div class="doc-title">{!brandTitle}</div>
+            </td>
+        </tr>
+    </table>
+
+    <table class="meta-table">
+        <tr>
+            <th>견적명</th>
+            <td>{!quoteRecord.Name}</td>
+            <th>견적번호</th>
+            <td>{!quoteRecord.QuoteNumber}</td>
+        </tr>
+        <tr>
+            <th>견적일자</th>
+            <td>
+                <apex:outputText value="{0,date,yyyy.MM.dd}">
+                    <apex:param value="{!TODAY()}" />
+                </apex:outputText>
+            </td>
+            <th>유효기간</th>
+            <td>
+                <apex:outputText value="{0,date,yyyy.MM.dd}">
+                    <apex:param value="{!quoteRecord.ExpirationDate}" />
+                </apex:outputText>
+            </td>
+        </tr>
+    </table>
+
+    <div class="section-title">1. 고객 정보</div>
+    <table class="info-table">
+        <tr>
+            <th>수신</th>
+            <td>{!preparedForName}</td>
+            <th>거래처</th>
+            <td>{!accountName}</td>
+        </tr>
+        <tr>
+            <th>담당자</th>
+            <td>{!contactName}</td>
+            <th>연락처</th>
+            <td>
+                <div>{!contactPhone}</div>
+                <div>{!contactEmail}</div>
+            </td>
+        </tr>
+        <tr>
+            <th>주소</th>
+            <td colspan="3">
+                <apex:outputText value="{!preparedForAddressHtml}" escape="false" />
+            </td>
+        </tr>
+    </table>
+
+    <div class="section-title">2. 견적 개요</div>
+    <table class="summary-table">
+        <tr>
+            <th>제안 유형</th>
+            <td>{!quoteRecord.Proposal_Scenario__c}</td>
+            <th>견적 상태</th>
+            <td>{!quoteStatusLabel}</td>
+        </tr>
+        <tr>
+            <th>연결 기회</th>
+            <td>{!opportunityName}</td>
+            <th>영업 단계</th>
+            <td>{!opportunityStageName}</td>
+        </tr>
+    </table>
+
+    <div class="section-title">3. 견적 품목</div>
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th style="width:7%;">No.</th>
+                <th style="width:43%;">품목</th>
+                <th style="width:10%;">수량</th>
+                <th style="width:17%;">단가</th>
+                <th style="width:8%;">할인</th>
+                <th style="width:15%;">공급가액</th>
+            </tr>
+        </thead>
+        <tbody>
+            <apex:repeat value="{!lineItems}" var="line">
+                <tr>
+                    <td class="center">{!line.sequence}</td>
+                    <td>
+                        <div>{!line.productName}</div>
+                        <div class="product-code">{!line.productCode}</div>
+                    </td>
+                    <td class="right">
+                        <apex:outputText value="{0,number,#,##0.##}">
+                            <apex:param value="{!line.quantity}" />
+                        </apex:outputText>
+                    </td>
+                    <td class="right">
+                        <apex:outputText value="{0,number,#,##0}">
+                            <apex:param value="{!line.unitPrice}" />
+                        </apex:outputText>
+                    </td>
+                    <td class="right">{!line.discountLabel}</td>
+                    <td class="right">
+                        <apex:outputText value="{0,number,#,##0}">
+                            <apex:param value="{!line.totalPrice}" />
+                        </apex:outputText>
+                    </td>
+                </tr>
+            </apex:repeat>
+
+            <apex:outputPanel rendered="{!hasNoLineItems}" layout="none">
+                <tr>
+                    <td colspan="6" class="center empty-state">견적 품목이 없습니다.</td>
+                </tr>
+            </apex:outputPanel>
+        </tbody>
+    </table>
+
+    <table class="totals-wrap">
+        <tr>
+            <td class="totals-left">
+                <div class="note-box">
+                    <div class="note-title">비고</div>
+                    <apex:outputPanel rendered="{!hasDescription}">
+                        <apex:outputText value="{!quoteDescriptionHtml}" escape="false" />
+                    </apex:outputPanel>
+                    <apex:outputPanel rendered="{!hasNoDescription}">
+                        <span class="empty-state">별도 비고 없음</span>
+                    </apex:outputPanel>
+                </div>
+            </td>
+            <td class="totals-right">
+                <table class="totals-table">
+                    <tr>
+                        <th>품목 소계</th>
+                        <td class="right">
+                            <apex:outputText value="{0,number,#,##0}">
+                                <apex:param value="{!subtotalAmount}" />
+                            </apex:outputText>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>할인액</th>
+                        <td class="right">
+                            <apex:outputText value="{0,number,#,##0}">
+                                <apex:param value="{!discountAmount}" />
+                            </apex:outputText>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>세금</th>
+                        <td class="right">
+                            <apex:outputText value="{0,number,#,##0}">
+                                <apex:param value="{!taxAmount}" />
+                            </apex:outputText>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>배송/기타</th>
+                        <td class="right">
+                            <apex:outputText value="{0,number,#,##0}">
+                                <apex:param value="{!shippingAmount}" />
+                            </apex:outputText>
+                        </td>
+                    </tr>
+                    <tr class="grand-total">
+                        <th>총 견적금액</th>
+                        <td class="right">
+                            KRW
+                            <apex:outputText value="{0,number,#,##0}">
+                                <apex:param value="{!grandTotalAmount}" />
+                            </apex:outputText>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <div class="section-title">4. 제안 조건</div>
+    <table class="info-table">
+        <tr>
+            <th>렌탈 조건</th>
+            <td>
+                월 렌탈료:
+                <apex:outputText value="{0,number,#,##0}">
+                    <apex:param value="{!quoteRecord.Monthly_Rental_Fee__c}" />
+                </apex:outputText>
+                /
+                기간:
+                <apex:outputText value="{0,number,#,##0}">
+                    <apex:param value="{!quoteRecord.Rental_Term_Months__c}" />
+                </apex:outputText>
+                개월
+            </td>
+            <th>설치비</th>
+            <td class="right">
+                <apex:outputText value="{0,number,#,##0}">
+                    <apex:param value="{!quoteRecord.Installation_Fee__c}" />
+                </apex:outputText>
+            </td>
+        </tr>
+        <tr>
+            <th>렌탈 계약 총액</th>
+            <td class="right">
+                <apex:outputText value="{0,number,#,##0}">
+                    <apex:param value="{!rentalContractTotalAmount}" />
+                </apex:outputText>
+            </td>
+            <th>구매 총액</th>
+            <td class="right">
+                <apex:outputText value="{0,number,#,##0}">
+                    <apex:param value="{!quoteRecord.Purchase_Total_Amount__c}" />
+                </apex:outputText>
+            </td>
+        </tr>
+        <tr>
+            <th>최종 제안 금액</th>
+            <td class="right">
+                <apex:outputText value="{0,number,#,##0}">
+                    <apex:param value="{!grandTotalAmount}" />
+                </apex:outputText>
+            </td>
+            <th>할인/특이사항</th>
+            <td>{!quoteRecord.Discount_Justification__c}</td>
+        </tr>
+    </table>
+
+    <table class="footer-table">
+        <tr>
+            <td style="width:72%;">
+                <div>{!footerNote}</div>
+                <div style="margin-top:4px;">
+                    공급자: {!brandCompanyName}
+                    <span style="margin-left:12px;">거래처 문의: {!accountPhone}</span>
+                </div>
+            </td>
+            <td style="width:16%; text-align:right; padding-right:8px;">
+                공급자 확인
+            </td>
+            <td style="width:12%;">
+                <div class="stamp-box">서명 / 직인</div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+</apex:page>

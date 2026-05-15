@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ValidationRule xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Prevent_Self_Approval</fullName>
+    <active>true</active>
+    <errorConditionFormula>AND(
+    NOT(ISBLANK(Requester__c)),
+    NOT(ISBLANK(Approver__c)),
+    Requester__c = Approver__c
+)</errorConditionFormula>
+    <errorDisplayField>Approver__c</errorDisplayField>
+    <errorMessage>요청자와 결재자는 동일할 수 없습니다. 다른 결재자를 지정해 주세요.</errorMessage>
+</ValidationRule>

@@ -1,0 +1,66 @@
+<aura:component
+    implements="force:hasRecordId,force:lightningQuickActionWithoutHeader"
+    access="global"
+>
+    <aura:handler name="init" value="{!this}" action="{!c.handleInit}" />
+    <aura:attribute name="recordId" type="Id" />
+    <aura:attribute name="accountId" type="Id" />
+    <aura:attribute name="fullName" type="String" />
+    <aura:attribute name="isSaving" type="Boolean" default="false" />
+
+    <lightning:recordEditForm
+        aura:id="contactForm"
+        objectApiName="Contact"
+        onsubmit="{!c.handleSubmit}"
+        onsuccess="{!c.handleSuccess}"
+        onerror="{!c.handleError}"
+    >
+        <lightning:messages />
+
+        <div class="shell slds-p-around_medium">
+            <div class="header">
+                <h2 class="title">연락처 생성</h2>
+            </div>
+
+            <lightning:input
+                aura:id="fullNameInput"
+                name="fullName"
+                label="이름"
+                value="{!v.fullName}"
+                maxlength="80"
+                required="true"
+            />
+
+            <div class="field-grid">
+                <lightning:inputField
+                    fieldName="AccountId"
+                    value="{!v.accountId}"
+                />
+                <lightning:inputField fieldName="Title" />
+                <lightning:inputField fieldName="Department" />
+                <lightning:inputField fieldName="LeadSource" />
+                <lightning:inputField fieldName="Email" />
+                <lightning:inputField fieldName="Phone" />
+                <lightning:inputField fieldName="MobilePhone" />
+            </div>
+
+            <div class="footer-actions">
+                <lightning:button
+                    label="취소"
+                    onclick="{!c.handleCancel}"
+                    disabled="{!v.isSaving}"
+                />
+                <lightning:button
+                    label="연락처 생성"
+                    variant="brand"
+                    onclick="{!c.handleSave}"
+                    disabled="{!v.isSaving}"
+                />
+            </div>
+        </div>
+
+        <aura:if isTrue="{!v.isSaving}">
+            <lightning:spinner alternativeText="연락처를 생성하는 중입니다." size="medium" />
+        </aura:if>
+    </lightning:recordEditForm>
+</aura:component>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Budget_Range__c</fullName>
+    <label>예산 범위</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>미정</fullName>
+                <default>true</default>
+                <label>미정</label>
+            </value>
+            <value>
+                <fullName>1천만원 미만</fullName>
+                <default>false</default>
+                <label>1천만원 미만</label>
+            </value>
+            <value>
+                <fullName>1천만-5천만원</fullName>
+                <default>false</default>
+                <label>1천만-5천만원</label>
+            </value>
+            <value>
+                <fullName>5천만-1억원</fullName>
+                <default>false</default>
+                <label>5천만-1억원</label>
+            </value>
+            <value>
+                <fullName>1억원 이상</fullName>
+                <default>false</default>
+                <label>1억원 이상</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

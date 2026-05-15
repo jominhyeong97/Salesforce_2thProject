@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>salesHomeRegionPlaceholder</componentName>
+                <identifier>c_taskOperationsLeftPlaceholder</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>left</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>taskOperationsWorkspace</componentName>
+                <identifier>c_taskOperationsWorkspace</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>center</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>salesHomeRegionPlaceholder</componentName>
+                <identifier>c_taskOperationsRightPlaceholder</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>right</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <masterLabel>Task 운영 센터</masterLabel>
+    <template>
+        <name>pageTemplate_2_7_3</name>
+    </template>
+    <type>AppPage</type>
+</FlexiPage>

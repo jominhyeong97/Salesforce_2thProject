@@ -1,0 +1,149 @@
+<apex:page
+    applyBodyTag="false"
+    applyHtmlTag="false"
+    cache="false"
+    docType="html-5.0"
+    showHeader="false"
+    sidebar="false"
+    standardStylesheets="false"
+>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8" />
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    />
+    <title>카카오 주소 검색</title>
+    <style>
+        html,
+        body {
+            background: #ffffff;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            color: #181818;
+            font-family: "Malgun Gothic", "Apple SD Gothic Neo", sans-serif;
+        }
+
+        .shell {
+            display: grid;
+            gap: 12px;
+            height: 100%;
+            padding: 16px;
+        }
+
+        .title {
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .description {
+            color: #5c5c5c;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        .postcode-root {
+            border: 1px solid #d8dde6;
+            border-radius: 8px;
+            flex: 1 1 auto;
+            min-height: 480px;
+            overflow: hidden;
+        }
+    </style>
+    <script src="https://t1.kakaocdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
+</head>
+<body>
+    <div class="shell">
+        <div>
+            <p class="title">사업장 주소 검색</p>
+            <p class="description">
+                도로명 또는 지번을 검색한 뒤 정확한 주소를 선택해 주세요.
+            </p>
+        </div>
+        <div class="postcode-root" id="postcode-root"></div>
+    </div>
+
+    <script>
+        //<![CDATA[
+        (function initializePostcodePicker() {
+            var targetWindow = window.opener || window.parent;
+
+            function postSelection(payload) {
+                if (!targetWindow || !payload) {
+                    return;
+                }
+
+                targetWindow.postMessage(
+                    JSON.stringify({
+                        type: "KAKAO_POSTCODE_SELECTED",
+                        address: payload.address || "",
+                        roadAddress: payload.roadAddress || "",
+                        jibunAddress: payload.jibunAddress || "",
+                        extraAddress: payload.extraAddress || "",
+                        zonecode: payload.zonecode || "",
+                        region: payload.region || "",
+                        city: payload.city || "",
+                        country: payload.country || "대한민국"
+                    }),
+                    "*"
+                );
+            }
+
+            function buildExtraAddress(data) {
+                var extraAddress = "";
+
+                if (data.userSelectedType !== "R") {
+                    return extraAddress;
+                }
+
+                if (data.bname && /[동로가]$/.test(data.bname)) {
+                    extraAddress += data.bname;
+                }
+                if (data.buildingName && data.apartment === "Y") {
+                    extraAddress += extraAddress
+                        ? ", " + data.buildingName
+                        : data.buildingName;
+                }
+
+                return extraAddress ? "(" + extraAddress + ")" : "";
+            }
+
+            new kakao.Postcode({
+                oncomplete: function(data) {
+                    var address =
+                        data.userSelectedType === "R"
+                            ? data.roadAddress
+                            : data.jibunAddress;
+
+                    postSelection({
+                        address: address,
+                        city: data.sigungu || "",
+                        country: "대한민국",
+                        extraAddress: buildExtraAddress(data),
+                        jibunAddress: data.jibunAddress || "",
+                        region: data.sido || "",
+                        roadAddress: data.roadAddress || "",
+                        zonecode: data.zonecode || ""
+                    });
+
+                    window.setTimeout(function() {
+                        window.close();
+                    }, 150);
+                },
+                height: "100%",
+                maxSuggestItems: 5,
+                width: "100%"
+            }).embed(document.getElementById("postcode-root"));
+        })();
+        //]]>
+    </script>
+</body>
+</html>
+</apex:page>

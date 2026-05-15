@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>BillingTerm</fullName>
+    <inlineHelpText>이 소비 일정이 적용되는 대금 청구 단위 수. 예를 들어 대금 청구 기간 단위를 개월로 선택할 경우 12를 입력하여 12개월 동안 소비 일정을 적용합니다. 최대 20분기, 60개월 또는 5년으로 소비 일정을 적용합니다.</inlineHelpText>
+    <trackHistory>false</trackHistory>
+</CustomField>

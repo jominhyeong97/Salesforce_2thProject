@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ImpactAmount</fullName>
+    <inlineHelpText>대변 메모 및 인보이스의 잔고에 영향을 미칩니다. 적용되지 않는 유형의 신청은 부정적인 영향을 미치며 적용되는 유형의 신청은 긍정적인 영향을 미칩니다.</inlineHelpText>
+</CustomField>

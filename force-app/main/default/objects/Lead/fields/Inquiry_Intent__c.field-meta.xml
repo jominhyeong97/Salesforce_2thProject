@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Inquiry_Intent__c</fullName>
+    <label>문의 목적</label>
+    <required>false</required>
+    <trackFeedHistory>false</trackFeedHistory>
+    <type>Picklist</type>
+    <valueSet>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value>
+                <fullName>견적 요청</fullName>
+                <default>false</default>
+                <label>견적 요청</label>
+            </value>
+            <value>
+                <fullName>제품 문의</fullName>
+                <default>false</default>
+                <label>제품 문의</label>
+            </value>
+            <value>
+                <fullName>데모 요청</fullName>
+                <default>false</default>
+                <label>데모 요청</label>
+            </value>
+            <value>
+                <fullName>기술 문의</fullName>
+                <default>false</default>
+                <label>기술 문의</label>
+            </value>
+            <value>
+                <fullName>파트너 문의</fullName>
+                <default>false</default>
+                <label>파트너 문의</label>
+            </value>
+            <value>
+                <fullName>기타</fullName>
+                <default>false</default>
+                <label>기타</label>
+            </value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>

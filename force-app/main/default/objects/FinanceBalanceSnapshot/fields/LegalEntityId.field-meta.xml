@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>LegalEntityId</fullName>
+    <inlineHelpText>융자에 연결된 법인입니다. 외부 원장을 처리할 수 있도록 GL 규칙에 융자를 연결하기 위해 추가할 수 있는 선택적 조회입니다.</inlineHelpText>
+    <type>Lookup</type>
+</CustomField>

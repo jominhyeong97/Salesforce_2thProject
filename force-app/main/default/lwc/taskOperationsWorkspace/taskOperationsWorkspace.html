@@ -1,0 +1,62 @@
+<template>
+    <lightning-card title="Task 운영 센터" icon-name="standard:task2">
+        <lightning-button-group slot="actions">
+            <lightning-button label="새 Task" onclick={handleNewTask}></lightning-button>
+            <lightning-button-icon
+                icon-name="utility:refresh"
+                alternative-text="새로고침"
+                title="새로고침"
+                onclick={handleRefresh}
+                disabled={isBusy}
+            ></lightning-button-icon>
+        </lightning-button-group>
+
+        <template if:true={isLoading}>
+            <lightning-spinner alternative-text="Task 운영 데이터를 불러오는 중입니다."></lightning-spinner>
+        </template>
+
+        <template if:true={errorMessage}>
+            <div class="slds-p-horizontal_medium slds-p-bottom_medium slds-text-color_error">
+                {errorMessage}
+            </div>
+        </template>
+
+        <template if:true={data}>
+            <div class="slds-p-horizontal_medium slds-p-top_small">
+                <div class="slds-grid slds-wrap slds-gutters_small">
+                    <template for:each={metrics} for:item="metric">
+                        <div key={metric.label} class="slds-col slds-size_1-of-1 slds-medium-size_1-of-2 slds-large-size_1-of-5">
+                            <div class="slds-box slds-theme_default metric-box">
+                                <p class="slds-text-title_caps">{metric.label}</p>
+                                <p class="slds-text-heading_medium slds-m-top_x-small">{metric.value}</p>
+                                <p class="slds-text-body_small slds-text-color_weak slds-m-top_x-small">
+                                    {metric.helperText}
+                                </p>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </div>
+
+            <div class="slds-p-around_medium">
+                <lightning-tabset>
+                    <lightning-tab label="내 미완료 Task">
+                        <c-task-operations-grid rows={openTasks}></c-task-operations-grid>
+                    </lightning-tab>
+                    <lightning-tab label="SLA 임박">
+                        <c-task-operations-grid rows={slaTasks}></c-task-operations-grid>
+                    </lightning-tab>
+                    <lightning-tab label="연체 Task">
+                        <c-task-operations-grid rows={overdueTasks}></c-task-operations-grid>
+                    </lightning-tab>
+                    <lightning-tab label="계약 갱신">
+                        <c-task-operations-grid rows={renewalTasks}></c-task-operations-grid>
+                    </lightning-tab>
+                    <lightning-tab label="재공략">
+                        <c-task-operations-grid rows={reengagementTasks}></c-task-operations-grid>
+                    </lightning-tab>
+                </lightning-tabset>
+            </div>
+        </template>
+    </lightning-card>
+</template>

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>ChargeAmount</fullName>
+    <inlineHelpText>거래의 소계에 기여하는 요금</inlineHelpText>
+</CustomField>
