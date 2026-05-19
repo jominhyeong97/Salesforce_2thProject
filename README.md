@@ -1,26 +1,316 @@
-# AquaFlow CRM
+# Aqua Service
 
-렌탈과 구매가 모두 가능한 정수기 업체 `Aqua`를 위한 Salesforce CRM 프로젝트입니다.
+> **렌탈·구매가 모두 가능한 정수기 업체 `Aqua`를 위한 Salesforce Sales Cloud 영업 프로세스 개선 프로젝트**
+> 리드 유입부터 계약 체결까지 이어지는 영업 흐름을 자동화하고, 사용자 중심 화면으로 업무 효율을 높였습니다.
 
-## Scope
+![Salesforce](https://img.shields.io/badge/Salesforce-Sales%20Cloud-00A1E0?logo=salesforce&logoColor=white)
+![Apex](https://img.shields.io/badge/Apex-18%20classes%20%2B%2013%20tests-1B96FF)
+![LWC](https://img.shields.io/badge/Lightning%20Web%20Components-16-0176D3)
+![Flow](https://img.shields.io/badge/Flow-5-032D60)
+![SFDX](https://img.shields.io/badge/Tooling-SFDX%20%7C%20Jest%20%7C%20ESLint-555555)
 
-- Web-to-Lead로 Aqua 상담 유입을 받고 리드 데이터로 전환합니다.
-- 리드 점수, 계약 종료 윈도우, Task SLA로 영업 우선순위를 자동화합니다.
-- 상담 유형, 영업 라우팅 그룹, 영업 액션 요약을 자동 산출합니다.
-- 리드 전환 화면에서 기존 거래처/연락처 추천, 기회 생성 여부, 전환 후 이동까지 한 번에 처리합니다.
-- 계정/연락처 리스트에서 한국식 단일 `이름` 입력 모달로 연락처를 생성합니다.
-- 견적 승인 Flow/LWC와 내부 결재 문서 흐름을 관리합니다.
-- 영업사원이 홈에서 Hot 리드, 지연 Task, 갱신 관찰, 견적 후속을 한 번에 봅니다.
-- 수주 실패 사유와 재공략 가능성을 데이터로 남깁니다.
+<sub>작성자 · 조민형 (DX 1본부 2팀)</sub>
 
-## Project Layout
+---
 
-- 현재 deployable metadata는 다시 `force-app/main/default` 기준으로 관리합니다.
-- 객체/필드/레이아웃/클래스/플로우를 한 프로젝트 안에서 유지하고, 도메인 구분은 파일명과 문서로 관리합니다.
-- Apex 클래스는 `force-app/main/default/classes` 아래에서 `common`, `lead`, `opportunity`, `quote` 하위 폴더로 정리합니다.
-- 작업 이력과 규칙은 `README.md`, `LEADSCORE.md`, `PRICING_RULES.md`에 계속 누적합니다.
+## 목차
 
-## Current Rules
+1. [프로젝트 개요](#1-프로젝트-개요)
+2. [왜 만들었는가](#2-왜-만들었는가)
+3. [전체 프로세스 흐름](#3-전체-프로세스-흐름)
+4. [비즈니스 로직 개선](#4-비즈니스-로직-개선)
+5. [사용자 관점 개선](#5-사용자-관점-개선)
+6. [아쉬웠던 점 & 향후 개선](#6-아쉬웠던-점--향후-개선)
+7. [기술 스택 & 프로젝트 구조](#7-기술-스택--프로젝트-구조)
+8. [부록 — 작업 이력 · 운영 규칙 · 주요 파일](#부록--작업-이력--운영-규칙--주요-파일)
+
+---
+
+## 1. 프로젝트 개요
+
+`Aqua Service`는 Salesforce Sales Cloud를 기반으로 정수기 렌탈·구매 영업의 전 과정을
+한 흐름으로 잇는 CRM 프로젝트입니다. **Web-to-Lead 유입 → 리드 → 기회 → 견적 → 승인 → 계약**으로
+이어지는 표준 영업 단계에서, 반복 수작업을 자동화하고 영업 담당자가 우선순위를
+한눈에 파악할 수 있도록 화면을 재설계했습니다.
+
+| 영역 | 핵심 내용 |
+| :--- | :--- |
+| **01. Lead 관리** | 리드 점수화, 상담 유형·라우팅 그룹 자동 분류, 후속 Task SLA 자동화 |
+| **02. Opportunity 흐름** | 국세청 API 사업자 검증, 단계 진행 통제, 가격·계약기간 자동 계산 |
+| **03. Quote 승인** | 견적 승인 요청 자동화, 결재자 자동 지정, 상태 동기화 |
+| **04. Contract 생성** | 수주 완료 시 계약 자동 생성, 수주 실패 시 재공략 Task 자동화 |
+
+---
+
+## 2. 왜 만들었는가
+
+기존 영업 프로세스는 단계마다 사용자가 직접 객체를 오가며 상태를 바꿔야 했고,
+리드·계약 데이터가 "생성과 종료" 중심으로만 관리되어 후속 영업 흐름이 끊겼습니다.
+
+| 🔴 기존 프로세스 문제점 | 🔵 개선 목표 |
+| :--- | :--- |
+| 각 단계 완료 후 사용자가 직접 관련 객체로 이동해 상태를 변경해야 함 | 객체 간 상태 변경을 **자동화**하여 반복 업무와 누락을 줄임 |
+| 견적·계약 완료 등 반복 수작업으로 상태 변경 누락·업무 지연 발생 | 리드부터 계약까지 고객 데이터를 **체계적으로 관리** |
+| 리드·계약 데이터가 단순 생성/종료 중심이라 후속 영업 흐름이 부족 | 사용자 친화적 **UI/UX**로 정보 접근성과 처리 속도를 높임 |
+| 화면 접근 경로가 길고 현재 진행 상황을 직관적으로 파악하기 어려움 | |
+
+---
+
+## 3. 전체 프로세스 흐름
+
+```mermaid
+flowchart LR
+    A[웹투리드<br/>Web-to-Lead] --> B[리드 생성<br/>Lead]
+    B --> C[기회 생성<br/>Opportunity]
+    C --> D[견적 생성<br/>Quote]
+    D --> E[승인 요청<br/>Approval]
+    E --> F[계약 생성<br/>Contract]
+
+    B -.리드 점수·Task 자동화.-> B
+    C -.사업자 검증·단계 통제.-> C
+    D -.가격·계약기간 자동 계산.-> D
+    E -.결재자 자동 지정.-> E
+    F -.수주 실패 시 재공략.-> F
+```
+
+각 단계는 Trigger·Apex Handler·Flow가 맞물려 동작하며, 4장에서 단계별 개선 내용을
+**Before / After**와 실제 화면 증적으로 설명합니다.
+
+---
+
+## 4. 비즈니스 로직 개선
+
+> 단계 완료 후 상태 변경을 자동화하고, 핵심 기준을 시스템으로 검증하며,
+> 리드–기회–견적–계약 데이터 흐름이 끊기지 않도록 연결성을 강화했습니다.
+
+### 4.1 리드 자동 분류 및 후속 Task 생성
+
+유입된 리드를 점수화해 우선순위를 표준화하고, 등급에 맞춰 후속 상담 Task를 자동 생성합니다.
+
+| BEFORE | AFTER |
+| :--- | :--- |
+| 유입 리드를 담당자가 직접 판단하고 우선순위를 수동 정리 | 리드 점수·상담 유형·라우팅 그룹을 **자동 계산**해 우선순위 표준화 |
+| 후속 상담 Task 생성 기준이 없어 대응 속도가 들쭉날쭉 | Hot/Warm 리드와 계약 갱신 대상에 **후속 Task 자동 생성** |
+
+**리드 점수 산정 기준** — 문의 목적 · 도입 희망 시점 · 예산 · 고객 상황 · 계약 종료 시점 · 설치 규모
+
+| 등급 | 기준 점수 | 후속 Task SLA |
+| :--- | :--- | :--- |
+| 🔥 **Hot** | 80점 이상 | 1일 SLA Task 생성 + 즉시 확인 알림 |
+| 🌤 **Warm** | 55점 이상 | 3일 SLA Task 생성 |
+| ❄️ **Cold** | 54점 이하 | 즉시 대응 Task 미생성 |
+| 🔁 **Renewal Watch** | 렌탈 + 계약 종료 31~90일 | 7일 SLA 갱신 Task 생성 |
+
+<p align="center">
+  <img src="docs/assets/process/01-lead-auto-classification.gif" alt="리드 자동 분류 및 후속 Task 생성 시연" width="820"/>
+</p>
+
+<p align="center"><sub>▶ <a href="docs/assets/process/01-lead-auto-classification.mp4">원본 영상으로 보기</a> · <a href="docs/assets/process/01-lead-classification-detail.png">분류 결과 상세 화면</a></sub></p>
+
+**관련 코드** — [`LeadSalesAutomationHandler.cls`](force-app/main/default/classes/lead/LeadSalesAutomationHandler.cls) · [`LeadTrigger.trigger`](force-app/main/default/triggers/LeadTrigger.trigger) · [`SalesTaskSupport.cls`](force-app/main/default/classes/common/SalesTaskSupport.cls) · 운영 규칙은 [`LEADSCORE.md`](LEADSCORE.md) 참고
+
+---
+
+### 4.2 사업자 검증 기반 수주 통제
+
+기회 단계 상승 전 사업자번호를 검증해, 신뢰할 수 없는 거래처가 수주 완료로 넘어가는 것을 막습니다.
+
+| BEFORE | AFTER |
+| :--- | :--- |
+| 사업자번호 확인 없이도 기회 단계를 올릴 수 있어 데이터 신뢰도 저하 | **국세청 API**로 사업자번호를 검증하고 결과를 Opportunity에 저장 |
+| 검증 결과가 수기로 남아 추적이 어려움 | 법인은 검증 완료 전 **수주 완료 단계 진입 차단**, 개인은 예외 처리 |
+
+<p align="center">
+  <img src="docs/assets/process/02-business-verification.gif" alt="사업자 검증 기반 수주 통제 시연" width="820"/>
+</p>
+
+<p align="center"><sub>▶ <a href="docs/assets/process/02-business-verification.mp4">원본 영상으로 보기</a></sub></p>
+
+**관련 코드** — [`BusinessStatusService.cls`](force-app/main/default/classes/common/BusinessStatusService.cls) · [`OpportunityBusinessVerificationHandler.cls`](force-app/main/default/classes/opportunity/OpportunityBusinessVerificationHandler.cls) · [`OpportunityStageGuardHandler.cls`](force-app/main/default/classes/opportunity/OpportunityStageGuardHandler.cls) · [`SCF_Opportunity_Business_Status_Verification`](force-app/main/default/flows/SCF_Opportunity_Business_Status_Verification.flow-meta.xml)
+
+---
+
+### 4.3 견적 승인 프로세스 자동화
+
+견적 승인 요청과 결재 상태 관리를 한 흐름으로 묶어, 미승인 견적이 다음 단계로 넘어가지 않도록 통제합니다.
+
+| BEFORE | AFTER |
+| :--- | :--- |
+| 승인 요청과 결재 상태 관리가 분리돼 누락 위험 | Opportunity/Quote에서 바로 **승인 요청 생성** 후 결재자에게 알림 발송 |
+| 승인되지 않은 견적도 다음 단계로 진행 가능 | 승인 여부에 따라 Quote·Opportunity 상태가 **자동 반영** |
+
+> 💡 결재자는 수동 지정 대신 **계정 담당자(Account Owner)의 상위 매니저**에서 자동으로 결정됩니다.
+
+<p align="center">
+  <img src="docs/assets/process/03-quote-approval.gif" alt="견적 승인 프로세스 자동화 시연" width="820"/>
+</p>
+
+<p align="center"><sub>▶ <a href="docs/assets/process/03-quote-approval.mp4">원본 영상으로 보기</a></sub></p>
+
+**관련 코드** — [`QuoteApprovalService.cls`](force-app/main/default/classes/quote/QuoteApprovalService.cls) · [`QuoteApprovalWorkspaceController.cls`](force-app/main/default/classes/quote/QuoteApprovalWorkspaceController.cls) · [`QuoteStatusGuardHandler.cls`](force-app/main/default/classes/quote/QuoteStatusGuardHandler.cls) · [`SCF_Quote_Approval_Request`](force-app/main/default/flows/SCF_Quote_Approval_Request.flow-meta.xml)
+
+---
+
+### 4.4 가격 및 계약기간 자동 계산
+
+렌탈·구매 가격 구조를 분리하고, 라인아이템 기준으로 금액과 계약기간을 자동 집계합니다.
+
+| BEFORE | AFTER |
+| :--- | :--- |
+| 렌탈료·구매금액·총액·계약기간을 수작업으로 계산 | `QuoteLineItem`/`OpportunityLineItem` 기준 **금액·계약기간 자동 계산** |
+| 견적과 기회 간 금액 불일치가 발생하기 쉬움 | 리드–기회–견적 간 금액 흐름을 **일관되게 동기화** |
+
+**가격 공식**
+
+```text
+렌탈 총액 = 월 렌탈료 × 계약기간(개월) + 설치비
+구매 총액 = 구매 금액 + 설치비
+```
+
+계약 종료일을 기준으로 `30일 이내 / 31~60일 / 61~90일 / 90일 초과`로 구간화하여,
+종료가 임박한 렌탈 고객에게는 계약 갱신 Task를 자동 생성합니다.
+
+<p align="center">
+  <img src="docs/assets/process/04-price-calculation.gif" alt="가격 및 계약기간 자동 계산 시연" width="820"/>
+</p>
+
+<p align="center"><sub>▶ <a href="docs/assets/process/04-price-calculation.mp4">원본 영상으로 보기</a></sub></p>
+
+**관련 코드** — [`AquaPricingSupport.cls`](force-app/main/default/classes/common/AquaPricingSupport.cls) · [`OpportunityLineItemTrigger.trigger`](force-app/main/default/triggers/OpportunityLineItemTrigger.trigger) · [`QuoteLineItemTrigger.trigger`](force-app/main/default/triggers/QuoteLineItemTrigger.trigger) · 가격 규칙은 [`PRICING_RULES.md`](PRICING_RULES.md) 참고
+
+---
+
+### 4.5 계약 자동 생성 및 재공략 관리
+
+수주 완료 시 계약을 자동 생성하고, 수주 실패 건도 후속 재공략 흐름으로 데이터를 남깁니다.
+
+| BEFORE | AFTER |
+| :--- | :--- |
+| 수주 완료 후 계약 생성·연결 작업을 수동 처리 | 수주 완료 시 표준 **계약을 자동 생성**하고 견적과 연결 |
+| 수주 실패 건은 후속 재공략이 체계적으로 남지 않음 | 수주 실패 시 **재오픈 가능성에 따라 재공략 Task 자동 생성** |
+
+<p align="center">
+  <img src="docs/assets/process/05-contract-automation.gif" alt="계약 자동 생성 및 재공략 관리 시연" width="820"/>
+</p>
+
+<p align="center"><sub>▶ <a href="docs/assets/process/05-contract-automation.mp4">원본 영상으로 보기</a></sub></p>
+
+**관련 코드** — [`RTF_Create_Contract_for_Completed_Opportunity`](force-app/main/default/flows/RTF_Create_Contract_for_Completed_Opportunity.flow-meta.xml) · [`OpportunityReengagementHandler.cls`](force-app/main/default/classes/opportunity/OpportunityReengagementHandler.cls)
+
+---
+
+## 5. 사용자 관점 개선
+
+> 반복 입력 부담을 줄이고, 사용자가 "지금 무엇을 해야 하는지"를 화면 중심으로
+> 빠르게 파악할 수 있도록 입력·조회 경험을 다시 설계했습니다.
+
+### 5.1 개인/법인 리드 생성 화면 개선
+
+| BEFORE | AFTER |
+| :--- | :--- |
+| 개인 고객도 회사명을 직접 입력해야 해 입력이 불편 | 개인/법인 구분을 추가하고, 개인은 회사명을 `(개인) 이름`으로 **자동 생성** |
+| 웹투리드와 직접 생성 화면의 입력 기준이 일관되지 않음 | 웹투리드와 리드 생성 버튼 모두 **같은 입력 기준으로 통일** |
+
+<p align="center">
+  <img src="docs/assets/user/01-individual-corporate.png" alt="개인/법인 리드 생성 화면" width="820"/>
+</p>
+
+**관련 코드** — [`CustomerIdentitySupport.cls`](force-app/main/default/classes/common/CustomerIdentitySupport.cls) · `aura/leadCreateAction` · `aura/leadListQuickActionLauncher`
+
+---
+
+### 5.2 카카오 주소 검색 및 지도 연동
+
+| BEFORE | AFTER |
+| :--- | :--- |
+| 주소를 직접 입력해야 해 오입력 가능성이 높음 | **카카오 우편번호 검색**으로 주소를 간편하게 입력 |
+| 거래처·연락처 위치를 화면에서 바로 확인하기 어려움 | Account/Contact 화면에서 **카카오 지도**를 바로 확인 |
+
+<p align="center">
+  <img src="docs/assets/user/02-address-search.png" alt="카카오 주소 검색" width="410"/>
+  <img src="docs/assets/user/02-map-api.png" alt="카카오 지도 API 연동" width="410"/>
+</p>
+
+**관련 코드** — [`KakaoPostcodePicker.page`](KakaoPostcodePicker.page) · `lwc/accountBusinessMap` · `lwc/contactKakaoMap`
+
+---
+
+### 5.3 영업 홈 대시보드 구성
+
+| BEFORE | AFTER |
+| :--- | :--- |
+| 리드·Task·계약·승인 대기를 각각 따로 확인 | 홈 화면에서 KPI · Hot Lead · SLA 임박 Task · 계약 종료 예정 · 승인 대기를 **통합 제공** |
+| 오늘 우선 처리해야 할 업무가 한눈에 보이지 않음 | 영업 담당자가 **우선순위를 즉시 판단**할 수 있도록 구성 |
+
+<p align="center">
+  <img src="docs/assets/user/03-home-dashboard-top.png" alt="영업 홈 대시보드 상단" width="820"/>
+  <img src="docs/assets/user/03-home-dashboard-bottom.png" alt="영업 홈 대시보드 하단" width="820"/>
+</p>
+
+**관련 코드** — [`SalesRepHomeController.cls`](force-app/main/default/classes/lead/SalesRepHomeController.cls) · `lwc/salesHomeWorkspace` · `lwc/salesHomeKpiBar` · `lwc/salesHomeLeadManager` · `lwc/salesHomeTaskManager` · `lwc/salesHomeContractManager`
+
+---
+
+## 6. 아쉬웠던 점 & 향후 개선
+
+| # | 주제 | 내용 |
+| :---: | :--- | :--- |
+| 1 | **다각적 데이터 분석 및 사후 관리** | 리드와 완료된 계약은 체계적으로 관리했으나, 미전환 데이터를 분석에 더 적극적으로 활용하지 못한 점이 아쉬웠습니다. |
+| 2 | **비즈니스 프로세스 표준화** | 영업 담당자가 바뀌어도 영업 효율이 흔들리지 않도록, 각 단계에서 시스템이 최적의 액션을 제안하는 가이드라인을 구축하지 못했습니다. |
+| 3 | **능동적 업무 트리거 환경** | 데이터 변화를 실시간으로 감지해 업무 우선순위를 자동으로 트리거하는 환경까지는 구현하지 못했습니다. |
+
+---
+
+## 7. 기술 스택 & 프로젝트 구조
+
+### 기술 스택
+
+| 구분 | 내용 |
+| :--- | :--- |
+| **플랫폼** | Salesforce Sales Cloud |
+| **백엔드 로직** | Apex — 18개 클래스 + 13개 테스트 클래스, 5개 Trigger |
+| **화면** | Lightning Web Components 16개, Aura 4개, Visualforce (견적 PDF·주소 검색) |
+| **자동화** | Flow 5개 (계약 자동 생성, 사업자 검증, 견적 승인 요청 등) |
+| **외부 연동** | 국세청 사업자등록 상태 API, 카카오 우편번호·지도 API |
+| **개발 도구** | Salesforce CLI (SFDX), Jest (LWC 단위 테스트), ESLint |
+
+### 프로젝트 구조
+
+```text
+4th_Project/
+├─ force-app/main/default/
+│  ├─ classes/
+│  │  ├─ common/        AquaPricingSupport, BusinessStatusService, CustomerIdentitySupport ...
+│  │  ├─ lead/          LeadSalesAutomationHandler, SalesRepHomeController, LeadConversionWorkspaceController
+│  │  ├─ opportunity/   OpportunityBusinessVerificationHandler, OpportunityReengagementHandler ...
+│  │  └─ quote/         QuoteApprovalService, QuotePdfGenerationService, QuoteStatusGuardHandler ...
+│  ├─ triggers/         Lead / Opportunity / Quote / LineItem 트리거
+│  ├─ flows/            계약 자동 생성·사업자 검증·승인 요청 Flow
+│  ├─ lwc/              영업 홈·워크스페이스·지도 등 16개 컴포넌트
+│  ├─ aura/             리드·연락처 생성 Quick Action UI
+│  ├─ pages/            AquaQuotePdf 등 Visualforce 페이지
+│  └─ objects/          Lead / Opportunity / Quote / Contract 커스텀 필드·검증 규칙
+├─ docs/assets/         README 화면 증적 (process · user)
+├─ scripts/             샘플 데이터 리셋 등 Apex 스크립트
+├─ LEADSCORE.md         리드 점수·상담 유형·라우팅 그룹 운영 문서
+└─ PRICING_RULES.md     렌탈/구매 가격 계산 규칙 문서
+```
+
+### 도메인별 설계 메모
+
+- 도메인 로직은 Trigger → Handler(Apex) 패턴으로 분리하고, 클래스는
+  `common / lead / opportunity / quote` 하위 폴더로 정리했습니다.
+- Apex 도메인 로직마다 테스트 클래스를 함께 두어 핵심 시나리오를 검증합니다.
+- 리드 점수·가격 규칙 등 운영 규칙은 [`LEADSCORE.md`](LEADSCORE.md), [`PRICING_RULES.md`](PRICING_RULES.md)에 별도 문서로 관리합니다.
+
+---
+
+## 부록 — 작업 이력 · 운영 규칙 · 주요 파일
+
+<details>
+<summary><b>📋 운영 규칙 (Current Rules)</b></summary>
+
+<br/>
 
 - `Hot`: 80점 이상, 1일 SLA Task 생성, 즉시 확인 알림 전송
 - `Warm`: 55점 이상, 3일 SLA Task 생성
@@ -41,7 +331,12 @@
 - `렌탈안` 또는 `렌탈/구매 병행` 견적은 `렌탈 기간(개월)`이 없으면 저장할 수 없습니다.
 - 수동 리드 생성은 웹투리드와 같은 상담 필드 구조를 따르며, 이름은 단일 `이름` 입력으로 받아 `LastName`에 저장합니다.
 
-## Work Log
+</details>
+
+<details>
+<summary><b>🗂 작업 이력 (Work Log)</b></summary>
+
+<br/>
 
 - 2026-04-27: Task에 `영업 Task 유형` 커스텀 필드를 추가하고, 리드 후속 Task를 `초기 상담 / 견적 후속 / 계약 갱신 / 구매 전환` 체계로 표준화했습니다.
 - 2026-04-27: Opportunity가 `수주 실패`로 전환되면서 `재오픈 가능성`이 `높음/보통`이면 `재공략` Task가 자동 생성되도록 `OpportunityReengagementHandler`를 추가했습니다.
@@ -89,7 +384,12 @@
 - 2026-04-23: `scripts/apex/resetAquaSampleData.apex`로 Aqua 샘플 데이터를 초기화할 수 있게 정리했습니다.
 - 2026-04-23: 리드 점수, 계약 종료 윈도우, Warm/Hot Task SLA 자동화를 추가했습니다.
 
-## Key Files
+</details>
+
+<details>
+<summary><b>📁 주요 파일 (Key Files)</b></summary>
+
+<br/>
 
 - `webtolead-test.html`: Aqua Web-to-Lead 테스트 폼
 - `force-app/main/default/classes/lead/LeadConversionWorkspaceController.cls`: 리드 전환 추천/실행 API
@@ -118,3 +418,5 @@
 - `LEADSCORE.md`: 리드 점수, 상담 유형, 라우팅 그룹 운영 문서
 - `PRICING_RULES.md`: 렌탈/구매 가격 계산 규칙 문서
 - `scripts/apex/resetAquaSampleData.apex`: Aqua 샘플 데이터 리셋 스크립트
+
+</details>
